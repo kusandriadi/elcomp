@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayo Belajar Membaca!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Pustaka untuk efek suara -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            max-width: 95vw;
+        }
+        @media (min-width: 640px) {
+            .card {
+                max-width: 512px;
+                padding: 2rem;
+            }
+            .card-lg {
+                 max-width: 640px;
+            }
+        }
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: background-color 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        .btn-sound {
+            background-color: #f97316;
+            color: white;
+            border-radius: 9999px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        .btn-sound:hover {
+            background-color: #ea580c;
+        }
+        .display-text { 
+            font-size: clamp(4rem, 25vw, 10rem); 
+            font-weight: 700; 
+            color: #1f2937; 
+        }
+        .answer-input {
+            font-size: clamp(1.5rem, 7vw, 2.5rem);
+            font-weight: 600;
+            text-align: center;
+            border-radius: 1rem;
+            border: 2px solid #9ca3af;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            max-width: 300px;
+            text-transform: lowercase;
+        }
+        .answer-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+        }
+        .answer-input.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .answer-input.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .feedback-message { min-height: 1.5rem; }
+    </style>
+</head>
+<body class="bg-sky-100">
+
+    <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
+
+        <!-- Setup Screen -->
+        <div id="setup-screen" class="card text-center mx-auto">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Ayo Belajar Membaca!</h1>
+            <p class="text-gray-600 mb-8">Pilih latihan yang kamu suka di bawah ini.</p>
+            <div class="space-y-4">
+                <button data-mode="learn-letters" class="btn-primary w-full text-lg">Mengenal Huruf</button>
+                <button data-mode="learn-reading" class="btn-primary w-full text-lg">Belajar Membaca</button>
+                <button data-mode="typing-game" class="btn-primary w-full text-lg">Game Mengetik</button>
+            </div>
+        </div>
+
+        <!-- Learn Screen (for Letters and Reading) -->
+        <div id="learn-screen" class="hidden card card-lg text-center mx-auto">
+            <h2 id="learn-title" class="text-2xl font-bold text-gray-800 mb-8"></h2>
+            <div class="flex items-center justify-center space-x-4 mb-8">
+                <div id="display-area" class="display-text"></div>
+                <button id="sound-button" class="btn-sound hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                </button>
+            </div>
+            <div class="flex justify-between items-center">
+                <button id="prev-button" class="btn-secondary">← Sebelumnya</button>
+                <span id="item-counter" class="text-gray-600 font-semibold"></span>
+                <button id="next-button" class="btn-secondary">Berikutnya →</button>
+            </div>
+            <button data-action="back" class="mt-8 text-sm font-semibold text-blue-600 hover:text-blue-800">← Kembali ke Menu</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden card card-lg text-center mx-auto">
+             <h2 class="text-2xl font-bold text-gray-800 mb-2">Game Mengetik</h2>
+             <p id="game-counter" class="text-gray-600 mb-8"></p>
+             <div class="bg-gray-50 p-4 rounded-lg mb-6 min-h-[100px] flex items-center justify-center">
+                 <p id="game-word" class="display-text" style="font-size: clamp(2.5rem, 15vw, 5rem);"></p>
+            </div>
+            <div class="flex items-center justify-center space-x-2 sm:space-x-4 md:space-x-6 mb-6">
+                <input type="text" id="game-input" class="answer-input p-2" autofocus>
+            </div>
+            <p id="game-feedback" class="feedback-message text-red-600 font-semibold mt-4"></p>
+            <button data-action="back" class="mt-8 text-sm font-semibold text-blue-600 hover:text-blue-800">← Kembali ke Menu</button>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden card text-center mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Latihan Selesai!</h2>
+            <p class="text-gray-600 mb-2">Skor Kamu:</p>
+            <p id="final-score" class="text-6xl font-bold text-blue-600 mb-6"></p>
+            <p id="final-message" class="text-lg text-gray-700 mb-8"></p>
+            <button id="restart-button" class="btn-primary w-full">Coba Latihan Lain</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const allScreens = {
+            setup: document.getElementById('setup-screen'),
+            learn: document.getElementById('learn-screen'),
+            game: document.getElementById('game-screen'),
+            results: document.getElementById('results-screen'),
+        };
+        
+        const setupScreen = document.getElementById('setup-screen');
+        const learnScreen = document.getElementById('learn-screen');
+        const gameScreen = document.getElementById('game-screen');
+
+        const learnTitle = document.getElementById('learn-title');
+        const displayArea = document.getElementById('display-area');
+        const soundButton = document.getElementById('sound-button');
+        const prevButton = document.getElementById('prev-button');
+        const nextButton = document.getElementById('next-button');
+        const itemCounter = document.getElementById('item-counter');
+        
+        const gameCounter = document.getElementById('game-counter');
+        const gameWord = document.getElementById('game-word');
+        const gameInput = document.getElementById('game-input');
+        const gameFeedback = document.getElementById('game-feedback');
+        
+        const finalScoreEl = document.getElementById('final-score');
+        const finalMessageEl = document.getElementById('final-message');
+        const restartButton = document.getElementById('restart-button');
+
+        // --- Data ---
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(c => `${c}${c.toLowerCase()}`);
+        const words = [
+            'apel', 'ayam', 'air', 'awan', 'api', 'buku', 'bola', 'baju', 'bebek', 'bunga', 'cacing', 'cangkir', 'celana', 'cicak', 'cermin',
+            'dasi', 'dadu', 'domba', 'duri', 'donat', 'ember', 'elang', 'es', 'ekor', 'emas', 'foto', 'fajar', 'film', 'fauna', 'feri',
+            'gajah', 'garpu', 'gula', 'gigi', 'gunung', 'harimau', 'hujan', 'hati', 'hidung', 'hotel', 'ikan', 'ibu', 'istana', 'itik', 'ilmu',
+            'jam', 'jari', 'jendela', 'jeruk', 'jerapah', 'kucing', 'kuda', 'kaki', 'kaca', 'kertas', 'lampu', 'lebah', 'lidah', 'layang', 'laut',
+            'meja', 'mata', 'mobil', 'mulut', 'mangga', 'nanas', 'naga', 'nasi', 'nomor', 'net', 'obat', 'orang', 'otak', 'obeng', 'ombak',
+            'pintu', 'pohon', 'pensil', 'pipi', 'piring', 'quran', 'raja', 'ratu', 'rumah', 'roti', 'rambut', 'susu', 'sepatu', 'sabun', 'sapi', 'sendok',
+            'tangan', 'telinga', 'topi', 'tali', 'tomat', 'ular', 'ubi', 'unta', 'uang', 'udang', 'vas', 'video', 'vitamin', 'voli', 'wajah', 'waktu', 'wortel',
+            'xilofon', 'yoyo', 'yoga', 'yak', 'zebra', 'zona', 'zero', 'zodiak', 'zakat'
+        ];
+        const letterPronunciations = {
+            'A': 'a', 'B': 'be', 'C': 'ce', 'D': 'de', 'E': 'e', 'F': 'ef', 'G': 'ge',
+            'H': 'ha', 'I': 'i', 'J': 'je', 'K': 'ka', 'L': 'el', 'M': 'em', 'N': 'en',
+            'O': 'o', 'P': 'pe', 'Q': 'ki', 'R': 'er', 'S': 'es', 'T': 'te',
+            'U': 'u', 'V': 'fe', 'W': 'we', 'X': 'eks', 'Y': 'ye', 'Z': 'zet'
+        };
+
+        // --- Game State & Config ---
+        let currentMode = '';
+        let currentIndex = 0;
+        let data = [];
+        let synth, utterance;
+        let gameQuestionCounter = 0;
+        let gameCorrectAnswers = 0;
+        const GAME_MAX_QUESTIONS = 10;
+
+        // --- Screen Management ---
+        function showScreen(screenName) {
+            for (const key in allScreens) {
+                allScreens[key].classList.add('hidden');
+            }
+            allScreens[screenName].classList.remove('hidden');
+        }
+
+        // --- Speech Synthesis ---
+        function setupSpeech() {
+            if ('speechSynthesis' in window) {
+                synth = window.speechSynthesis;
+                utterance = new SpeechSynthesisUtterance();
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+            }
+        }
+
+        function speak(text) {
+            if (synth && text) {
+                utterance.text = text;
+                synth.speak(utterance);
+            }
+        }
+
+        // --- Learn Mode Logic ---
+        function updateLearnView() {
+            displayArea.textContent = data[currentIndex];
+            itemCounter.textContent = `${currentIndex + 1} / ${data.length}`;
+            prevButton.disabled = currentIndex === 0;
+            nextButton.disabled = currentIndex === data.length - 1;
+        }
+
+        function setupLearnMode(mode) {
+            currentMode = mode;
+            currentIndex = 0;
+            if (mode === 'learn-letters') {
+                learnTitle.textContent = 'Mengenal Huruf';
+                data = [...letters].sort(() => 0.5 - Math.random());
+                soundButton.classList.remove('hidden');
+            } else { // learn-reading
+                learnTitle.textContent = 'Belajar Membaca';
+                // UPDATED: Shuffle words for learning mode as well
+                data = [...words].sort(() => 0.5 - Math.random());
+                soundButton.classList.remove('hidden');
+            }
+            updateLearnView();
+            showScreen('learn');
+        }
+
+        // --- Game Mode Logic ---
+        function setupGame() {
+            currentMode = 'typing-game';
+            gameQuestionCounter = 0;
+            gameCorrectAnswers = 0;
+            data = [...words].sort(() => 0.5 - Math.random()); // Shuffle words for the game
+            showScreen('game');
+            nextGameQuestion();
+        }
+
+        function nextGameQuestion() {
+            if (gameQuestionCounter >= GAME_MAX_QUESTIONS) {
+                showResults();
+                return;
+            }
+            gameQuestionCounter++;
+            gameCounter.textContent = `Soal ${gameQuestionCounter} / ${GAME_MAX_QUESTIONS}`;
+            gameWord.textContent = data[gameQuestionCounter - 1];
+            gameInput.value = '';
+            gameInput.classList.remove('correct', 'incorrect');
+            gameInput.disabled = false;
+            gameFeedback.textContent = '';
+            gameInput.focus();
+        }
+
+        function checkGameAnswer() {
+            const userAnswer = gameInput.value.toLowerCase().trim();
+            const correctAnswer = gameWord.textContent.toLowerCase();
+
+            if (userAnswer === correctAnswer) {
+                gameCorrectAnswers++;
+                if (synth) new Tone.Synth().toDestination().triggerAttackRelease("G5", "8n");
+                gameFeedback.textContent = 'Benar! Hebat!';
+                gameInput.classList.add('correct');
+                gameInput.disabled = true;
+                setTimeout(nextGameQuestion, 1000);
+            } else {
+                gameFeedback.textContent = 'Coba lagi!';
+                gameInput.classList.add('incorrect');
+            }
+        }
+
+        function showResults() {
+            showScreen('results');
+            const score = gameCorrectAnswers * 10;
+            finalScoreEl.textContent = score;
+
+            let message = "Kerja bagus! Teruslah berlatih, kamu makin hebat setiap hari!";
+            if (score < 50) {
+                message = "Jangan menyerah! Setiap latihan membuatmu selangkah lebih maju.";
+            } else if (score >= 85) {
+                message = "Luar biasa! Kamu adalah pembaca dan penulis yang hebat!";
+            }
+            finalMessageEl.textContent = message;
+        }
+
+        // --- Event Listeners ---
+        setupScreen.addEventListener('click', (e) => {
+            if (e.target.dataset.mode) {
+                const mode = e.target.dataset.mode;
+                if (mode === 'typing-game') {
+                    setupGame();
+                } else {
+                    setupLearnMode(mode);
+                }
+            }
+        });
+
+        document.body.addEventListener('click', (e) => {
+            if (e.target.dataset.action === 'back') {
+                showScreen('setup');
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentIndex < data.length - 1) {
+                currentIndex++;
+                updateLearnView();
+            }
+        });
+
+        prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateLearnView();
+            }
+        });
+
+        soundButton.addEventListener('click', () => {
+            if (currentMode === 'learn-reading') {
+                speak(data[currentIndex]);
+            } else if (currentMode === 'learn-letters') {
+                const letterPair = data[currentIndex];
+                const upperCaseLetter = letterPair.charAt(0);
+                const pronunciation = letterPronunciations[upperCaseLetter];
+                if (pronunciation) {
+                    speak(pronunciation);
+                }
+            }
+        });
+        
+        gameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                checkGameAnswer();
+            }
+        });
+        
+        gameInput.addEventListener('input', () => {
+             gameInput.classList.remove('incorrect');
+             gameFeedback.textContent = '';
+        });
+
+        restartButton.addEventListener('click', () => showScreen('setup'));
+
+        // --- Initial setup ---
+        setupSpeech();
+        showScreen('setup');
+    </script>
+</body>
+</html>
