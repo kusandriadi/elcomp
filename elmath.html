@@ -147,10 +147,12 @@
                 </div>
             </div>
             <button id="start-button" class="btn-primary w-full mt-10">Mulai Belajar</button>
-            <div class="mt-4 flex justify-center space-x-4">
+            <div class="mt-4 flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-4">
                  <button id="show-multiplication-button" class="text-sm font-semibold text-blue-600 hover:text-blue-800">Tabel Perkalian</button>
                  <button id="show-division-button" class="text-sm font-semibold text-blue-600 hover:text-blue-800">Tabel Pembagian</button>
             </div>
+             <!-- ADDED: Back to Main Menu Link -->
+            <a href="index.html" class="inline-block mt-6 text-sm font-semibold text-gray-600 hover:text-gray-800">← Kembali ke Menu Utama</a>
         </div>
 
         <!-- Game Screen -->
@@ -173,7 +175,7 @@
                 <button id="submit-button" class="btn-submit">✓</button>
             </div>
             <p id="feedback-message" class="feedback-message text-red-600 font-semibold mt-4"></p>
-            <button id="back-button" class="mt-6 text-sm font-semibold text-blue-600 hover:text-blue-800">← Kembali ke Menu</button>
+            <button id="back-button" class="mt-6 text-sm font-semibold text-blue-600 hover:text-blue-800">← Kembali ke Menu Latihan</button>
         </div>
 
         <!-- Results Screen -->
@@ -518,7 +520,7 @@
 
             if (userAnswer === correctAnswer) {
                 correctAnswersCounter++;
-                if (synth) synth.triggerAttackRelease("G5", "8n");
+                if (synth) new Tone.Synth().toDestination().triggerAttackRelease("G5", "8n");
                 feedbackMessage.textContent = 'Benar! Hebat!';
                 feedbackMessage.classList.add('text-green-600');
                 answerInput.classList.add('correct');
