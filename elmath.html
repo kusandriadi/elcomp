@@ -284,7 +284,8 @@
         timerDotsContainer.innerHTML = '';
         if (currentGrade === 'tk') return;
 
-        const timeLimit = ['complex_mixed', 'story_problem', 'pattern_recognition'].includes(currentOperation) ? 20 : 10;
+        // UPDATED: Timer changed to 25 seconds for complex exercises
+        const timeLimit = ['complex_mixed', 'story_problem', 'pattern_recognition'].includes(currentOperation) ? 30 : 20;
 
         for (let i = 0; i < timeLimit; i++) {
             const dot = document.createElement('div');
