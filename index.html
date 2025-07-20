@@ -4,9 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arena Cerdas - Belajar Membaca, Matematika, dan Logika</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Preconnect to Google Fonts servers to speed up font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Tailwind CSS script without defer to prevent layout shift -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -64,7 +69,7 @@
 <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
     <div class="card text-center">
         <h1 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Selamat Datang di Arena Cerdas!</h1>
-        <p class="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
+        <p class="text-base sm:text-lg text-gray-700 mb-8 sm:mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
 
         <div class="space-y-4 sm:space-y-6">
             <!-- Link to Reading App -->
