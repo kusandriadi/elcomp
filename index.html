@@ -35,18 +35,11 @@
             gap: 0.75rem;
             padding: 1rem; /* Base padding */
             border-radius: 1rem;
-            font-size: 1.1rem; /* Base font size */
             font-weight: 600;
             text-decoration: none;
             color: white;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        @media (min-width: 640px) {
-            .btn-link {
-                padding: 1.25rem;
-                font-size: 1.25rem;
-            }
         }
         .btn-link:hover {
             transform: translateY(-4px);
@@ -64,40 +57,19 @@
         .btn-math:hover {
             background-color: #15803d; /* green-700 */
         }
-        /* Styles for landscape lock */
-        #orientation-lock {
-            display: none; /* Hidden by default */
-        }
-        /* Only show message on touch devices in portrait mode */
-        @media only screen and (max-device-width: 1024px) and (orientation: portrait) {
-            #app-container {
-                display: none;
-            }
-            #orientation-lock {
-                display: flex;
-            }
-        }
     </style>
 </head>
-<body class="bg-sky-100">
+<body class="flex items-center justify-center min-h-screen p-4">
 
-<!-- Container for the landscape lock message -->
-<div id="orientation-lock" class="fixed inset-0 z-50 flex-col items-center justify-center text-center p-4 bg-white">
-    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 mb-4"><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
-    <h2 class="text-xl font-semibold text-gray-800">Harap Putar Perangkat Anda</h2>
-    <p class="text-gray-600 mt-2">Gunakan mode lanskap (mendatar) untuk pengalaman terbaik.</p>
-</div>
-
-<!-- Main application container -->
 <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
     <div class="card text-center">
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Selamat Datang di Arena Cerdas!</h1>
-        <p class="text-base sm:text-lg text-gray-600 mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
+        <h1 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Selamat Datang di Arena Cerdas!</h1>
+        <p class="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
 
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
             <!-- Link to Reading App -->
-            <a href="elread.html" class="btn-link btn-reading">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="elread.html" class="btn-link text-base sm:text-xl btn-reading">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                 </svg>
@@ -105,8 +77,8 @@
             </a>
 
             <!-- Link to Math App -->
-            <a href="elmath.html" class="btn-link btn-math">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <a href="elmath.html" class="btn-link text-base sm:text-xl btn-math">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 20V4"></path>
                     <path d="M4 12h16"></path>
                     <path d="m18 8-8 8"></path>

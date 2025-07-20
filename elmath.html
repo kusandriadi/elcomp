@@ -89,18 +89,18 @@
         }
         /* Fluid font size for responsive display */
         .question-display {
-            font-size: clamp(2rem, 10vw, 3rem);
+            font-size: clamp(1.8rem, 8vw, 3rem);
             font-weight: 700;
             color: #1f2937;
         }
         .question-text-story {
-            font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+            font-size: clamp(1rem, 4vw, 1.5rem);
             font-weight: 500;
             color: #374151;
             line-height: 1.5;
         }
         .answer-input {
-            font-size: clamp(2rem, 9vw, 2.5rem);
+            font-size: clamp(1.8rem, 8vw, 2.5rem);
             font-weight: 600;
             text-align: center;
             border-radius: 1rem;
@@ -118,38 +118,16 @@
         .answer-input.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
         .answer-input.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
         .feedback-message { min-height: 1.5rem; }
-
-        /* ADDED: Styles for landscape lock */
-        #orientation-lock {
-            display: none; /* Hidden by default */
-        }
-        /* Only show message on touch devices in portrait mode */
-        @media only screen and (max-device-width: 1024px) and (orientation: portrait) {
-            #app-container {
-                display: none;
-            }
-            #orientation-lock {
-                display: flex;
-            }
-        }
     </style>
 </head>
 <body class="bg-sky-100">
 
-<!-- ADDED: Container for the landscape lock message -->
-<div id="orientation-lock" class="fixed inset-0 z-50 flex-col items-center justify-center text-center p-4 bg-white">
-    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 mb-4"><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
-    <h2 class="text-xl font-semibold text-gray-800">Harap Putar Perangkat Anda</h2>
-    <p class="text-gray-600 mt-2">Gunakan mode lanskap (mendatar) untuk pengalaman terbaik.</p>
-</div>
-
-<!-- ADDED: Main application container -->
 <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
 
     <!-- Setup Screen -->
     <div id="setup-screen" class="card text-center mx-auto">
         <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Selamat Datang!</h1>
-        <p class="text-gray-600 mb-8">Pilih jenjang kelas dan latihan yang kamu mau.</p>
+        <p class="text-base text-gray-600 mb-8">Pilih jenjang kelas dan latihan yang kamu mau.</p>
         <div class="space-y-6">
             <div>
                 <label for="grade-select" class="block text-left font-semibold text-gray-700 mb-2">Pilih Kelas:</label>
@@ -184,14 +162,14 @@
                 <span id="question-counter"></span>
             </div>
         </div>
-        <div id="timer-dots-container" class="flex justify-center flex-wrap space-x-2 mb-6" style="min-height: 16px;"></div>
+        <div id="timer-dots-container" class="flex justify-center flex-wrap space-x-1 sm:space-x-2 mb-6" style="min-height: 16px;"></div>
 
         <div id="question-container" class="bg-gray-50 p-4 rounded-lg mb-6 min-h-[100px] flex items-center justify-center">
             <span id="question-text" class="question-display"></span>
         </div>
 
-        <div class="flex items-center justify-center space-x-2 sm:space-x-4 md:space-x-6 mb-6">
-            <span id="answer-label" class="text-2xl font-bold"></span>
+        <div class="flex items-center justify-center space-x-2 sm:space-x-4 mb-6">
+            <span id="answer-label" class="text-xl sm:text-2xl font-bold"></span>
             <input type="text" id="answer-input" class="answer-input p-2" autofocus inputmode="numeric">
             <button id="submit-button" class="btn-submit">✓</button>
         </div>
@@ -310,7 +288,7 @@
 
         for (let i = 0; i < timeLimit; i++) {
             const dot = document.createElement('div');
-            dot.classList.add('w-3', 'h-3', 'bg-blue-400', 'rounded-full', 'transition-all', 'duration-500', 'mb-2');
+            dot.classList.add('w-2', 'h-2', 'sm:w-3', 'sm:h-3', 'bg-blue-400', 'rounded-full', 'transition-all', 'duration-500', 'mb-2');
             timerDotsContainer.appendChild(dot);
         }
 
