@@ -6,7 +6,7 @@
     <title>Ayo Belajar Membaca!</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Pustaka untuk efek suara -->
-    <script src="/asset/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -99,10 +99,32 @@
         .answer-input.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
         .answer-input.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
         .feedback-message { min-height: 1.5rem; }
+
+        /* Styles for landscape lock */
+        #orientation-lock {
+            display: none; /* Hidden by default */
+        }
+        /* Only show message on touch devices in portrait mode */
+        @media only screen and (max-device-width: 1024px) and (orientation: portrait) {
+            #app-container {
+                display: none;
+            }
+            #orientation-lock {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body class="bg-sky-100">
 
+<!-- Container for the landscape lock message -->
+<div id="orientation-lock" class="fixed inset-0 z-50 flex-col items-center justify-center text-center p-4 bg-white">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 mb-4"><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+    <h2 class="text-xl font-semibold text-gray-800">Harap Putar Perangkat Anda</h2>
+    <p class="text-gray-600 mt-2">Gunakan mode lanskap (mendatar) untuk pengalaman terbaik.</p>
+</div>
+
+<!-- Main application container -->
 <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
 
     <!-- Setup Screen -->
