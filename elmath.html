@@ -284,7 +284,8 @@
         timerDotsContainer.innerHTML = '';
         if (currentGrade === 'tk') return;
 
-        const timeLimit = ['complex_mixed', 'story_problem', 'pattern_recognition'].includes(currentOperation) ? 25 : 10;
+        // UPDATED: All timers are now 25 seconds
+        const timeLimit = 25;
 
         for (let i = 0; i < timeLimit; i++) {
             const dot = document.createElement('div');
@@ -519,7 +520,8 @@
 
         if (userAnswer === correctAnswer) {
             correctAnswersCounter++;
-            if (synth) new Tone.Synth().toDestination().triggerAttackRelease("G5", "8n");
+            // UPDATED: Use the initialized synth object
+            if (synth) synth.triggerAttackRelease("G5", "8n");
             feedbackMessage.textContent = 'Benar! Hebat!';
             feedbackMessage.classList.add('text-green-600');
             answerInput.classList.add('correct');
@@ -593,6 +595,7 @@
 
     // --- Initializer ---
     async function startGame() {
+        // UPDATED: Initialize audio on first user interaction
         if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
             await Tone.start();
             synth = new Tone.Synth().toDestination();
