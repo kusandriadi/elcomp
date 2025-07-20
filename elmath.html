@@ -118,10 +118,32 @@
         .answer-input.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
         .answer-input.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
         .feedback-message { min-height: 1.5rem; }
+
+        /* ADDED: Styles for landscape lock */
+        #orientation-lock {
+            display: none; /* Hidden by default */
+        }
+        /* Only show message on touch devices in portrait mode */
+        @media only screen and (max-device-width: 1024px) and (orientation: portrait) {
+            #app-container {
+                display: none;
+            }
+            #orientation-lock {
+                display: flex;
+            }
+        }
     </style>
 </head>
 <body class="bg-sky-100">
 
+<!-- ADDED: Container for the landscape lock message -->
+<div id="orientation-lock" class="fixed inset-0 z-50 flex-col items-center justify-center text-center p-4 bg-white">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-500 mb-4"><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+    <h2 class="text-xl font-semibold text-gray-800">Harap Putar Perangkat Anda</h2>
+    <p class="text-gray-600 mt-2">Gunakan mode lanskap (mendatar) untuk pengalaman terbaik.</p>
+</div>
+
+<!-- ADDED: Main application container -->
 <div id="app-container" class="flex items-center justify-center min-h-screen p-4">
 
     <!-- Setup Screen -->
@@ -284,8 +306,7 @@
         timerDotsContainer.innerHTML = '';
         if (currentGrade === 'tk') return;
 
-        // UPDATED: Timer changed to 25 seconds for complex exercises
-        const timeLimit = ['complex_mixed', 'story_problem', 'pattern_recognition'].includes(currentOperation) ? 30 : 20;
+        const timeLimit = ['complex_mixed', 'story_problem', 'pattern_recognition'].includes(currentOperation) ? 25 : 10;
 
         for (let i = 0; i < timeLimit; i++) {
             const dot = document.createElement('div');
