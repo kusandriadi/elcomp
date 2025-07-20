@@ -278,14 +278,21 @@
     const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
     const pickRandom = (arr) => arr[getRandomInt(0, arr.length - 1)];
 
+    // --- Audio Initialization ---
+    async function initAudio() {
+        if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
+            await Tone.start();
+            synth = new Tone.Synth().toDestination();
+        }
+    }
+
     // --- Timer Logic ---
     function startTimer() {
         clearInterval(timerInterval);
         timerDotsContainer.innerHTML = '';
         if (currentGrade === 'tk') return;
 
-        // UPDATED: All timers are now 25 seconds
-        const timeLimit = 25;
+        const timeLimit = 25; // UPDATED: All timers are now 25 seconds
 
         for (let i = 0; i < timeLimit; i++) {
             const dot = document.createElement('div');
@@ -520,7 +527,6 @@
 
         if (userAnswer === correctAnswer) {
             correctAnswersCounter++;
-            // UPDATED: Use the initialized synth object
             if (synth) synth.triggerAttackRelease("G5", "8n");
             feedbackMessage.textContent = 'Benar! Hebat!';
             feedbackMessage.classList.add('text-green-600');
@@ -595,11 +601,7 @@
 
     // --- Initializer ---
     async function startGame() {
-        // UPDATED: Initialize audio on first user interaction
-        if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
-            await Tone.start();
-            synth = new Tone.Synth().toDestination();
-        }
+        await initAudio(); // Initialize audio on first user interaction
         currentGrade = gradeSelect.value;
         currentOperation = operationSelect.value;
         questionCounter = 0;
