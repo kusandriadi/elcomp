@@ -1,3 +1,5 @@
+/* app.css */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,105 +25,105 @@ body {
   text-align: center;
 }
 
-/* Global styles untuk semua komponen */
-:global(.btn-link) {
+/* Global styles - :global() telah dihapus */
+.btn-link {
   @apply flex items-center justify-center gap-3 p-4 sm:p-5 rounded-2xl font-semibold text-white transition-all duration-300 shadow-md no-underline;
 }
 
-:global(.btn-link:hover) {
+.btn-link:hover {
   @apply -translate-y-1 shadow-lg;
 }
 
-:global(.font-poppins) {
+.font-poppins {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Math & Read game styles */
-:global(.card) {
+/* Math & Read game styles - :global() telah dihapus */
+.card {
   @apply bg-white p-6 rounded-3xl shadow-2xl transition-all duration-300 w-full max-w-sm;
 }
 
-:global(.card-lg) {
+.card-lg {
   @apply max-w-2xl;
 }
 
 @media (min-width: 640px) {
-  :global(.card) {
+  .card {
     @apply p-8 max-w-lg;
   }
-  :global(.card-lg) {
+  .card-lg {
     @apply max-w-2xl;
   }
 }
 
-:global(.form-select) {
+.form-select {
   @apply appearance-none bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-xl leading-tight;
 }
 
-:global(.form-select:focus) {
+.form-select:focus {
   @apply outline-none bg-white border-blue-500;
 }
 
-:global(.btn-primary) {
+.btn-primary {
   @apply bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300;
 }
 
-:global(.btn-primary:hover) {
+.btn-primary:hover {
   @apply -translate-y-1 shadow-lg;
 }
 
-:global(.btn-secondary) {
+.btn-secondary {
   @apply bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300;
 }
 
-:global(.btn-success) {
+.btn-success {
   @apply bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300;
 }
 
-:global(.input-field) {
+.input-field {
   @apply w-full py-3 px-4 text-2xl text-center border-2 border-gray-300 rounded-xl;
 }
 
-:global(.input-field:focus) {
+.input-field:focus {
   @apply outline-none border-blue-500;
 }
 
-:global(.input-correct) {
+.input-correct {
   @apply border-green-500 bg-green-50;
 }
 
-:global(.input-incorrect) {
+.input-incorrect {
   @apply border-red-500 bg-red-50;
 }
 
-:global(.question-display) {
+.question-display {
   @apply text-4xl md:text-6xl font-bold text-gray-800 mb-6;
 }
 
-:global(.feedback-message) {
+.feedback-message {
   @apply text-lg font-semibold mb-4;
 }
 
-:global(.timer-container) {
+.timer-container {
   @apply flex justify-center items-center gap-1 mb-4;
 }
 
-:global(.timer-dot) {
+.timer-dot {
   @apply w-3 h-3 rounded-full transition-all duration-300;
 }
 
-:global(.timer-dot.active) {
+.timer-dot.active {
   @apply bg-blue-400;
 }
 
-:global(.timer-dot.inactive) {
+.timer-dot.inactive {
   @apply bg-gray-200;
 }
 
-:global(.score-display) {
+.score-display {
   @apply font-bold text-green-600 mb-4;
 }
 
-:global(.level-info) {
+.level-info {
   @apply text-sm text-gray-600 mb-6;
 }

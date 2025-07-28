@@ -2,8 +2,7 @@
 export default {
   content: [
     "./index.html",
-    "./*.{svelte,js,ts}", // Memindai file di root
-    "./**/*.{svelte,js,ts}" // Memindai file di semua subdirektori
+    "./**/*.svelte", // Ini adalah cara paling bersih untuk memindai semua file Svelte
   ],
   theme: {
     extend: {
