@@ -1,6 +1,20 @@
 <script>
     import { onMount } from 'svelte';
 
+    // --- State Management ---
+    let screen = 'setup'; // 'setup', 'learn', 'game', 'results'
+    let currentMode = ''; // 'learn-letters', 'learn-reading', 'typing-game'
+    let currentIndex = 0;
+    let data = [];
+    let gameQuestionCounter = 0;
+    let gameCorrectAnswers = 0;
+    let gameInputValue = '';
+    let gameFeedback = '';
+    let inputCorrect = false;
+    let inputIncorrect = false;
+
+    const GAME_MAX_QUESTIONS = 10;
+
     // --- Data ---
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(c => `${c}${c.toLowerCase()}`);
     const words = [
@@ -20,29 +34,14 @@
         'U': 'u', 'V': 'fe', 'W': 'we', 'X': 'eks', 'Y': 'ye', 'Z': 'zet'
     };
 
-    // --- State Management ---
-    let screen = 'setup'; // 'setup', 'learn', 'game', 'results'
-    let currentMode = ''; // 'learn-letters', 'learn-reading', 'typing-game'
-    let currentIndex = 0;
-    let data = [];
-    let gameQuestionCounter = 0;
-    let gameCorrectAnswers = 0;
-    let gameInputValue = '';
-    let gameFeedback = '';
-    let gameInputCorrect = false;
-    let gameInputIncorrect = false;
-
-    const GAME_MAX_QUESTIONS = 10;
-
     // --- Audio ---
-    let synth;
+    let speechSynth;
     let utterance;
     let dingSynth;
 
-    // Initialize audio on mount, but it will be started on user interaction
     onMount(() => {
         if ('speechSynthesis' in window) {
-            synth = window.speechSynthesis;
+            speechSynth = window.speechSynthesis;
             utterance = new SpeechSynthesisUtterance();
             utterance.lang = 'id-ID';
             utterance.rate = 0.9;
@@ -50,7 +49,6 @@
     });
 
     async function initAudio() {
-        // Tone.js must be started by a user gesture
         if (typeof Tone !== 'undefined' && Tone.context.state !== 'running') {
             await Tone.start();
             dingSynth = new Tone.Synth().toDestination();
@@ -58,9 +56,9 @@
     }
 
     function speak(text) {
-        if (synth && text) {
+        if (speechSynth && text) {
             utterance.text = text;
-            synth.speak(utterance);
+            speechSynth.speak(utterance);
         }
     }
 
@@ -70,7 +68,7 @@
     }
 
     function handleModeSelect(mode) {
-        initAudio(); // Ensure audio is ready
+        initAudio();
         currentMode = mode;
         currentIndex = 0;
 
@@ -122,8 +120,8 @@
         gameQuestionCounter++;
         gameInputValue = '';
         gameFeedback = '';
-        gameInputCorrect = false;
-        gameInputIncorrect = false;
+        inputCorrect = false;
+        inputIncorrect = false;
     }
 
     function checkGameAnswer() {
@@ -134,11 +132,11 @@
             gameCorrectAnswers++;
             if (dingSynth) dingSynth.triggerAttackRelease("G5", "8n");
             gameFeedback = 'Benar! Hebat!';
-            gameInputCorrect = true;
+            inputCorrect = true;
             setTimeout(nextGameQuestion, 1000);
         } else {
             gameFeedback = 'Coba lagi!';
-            gameInputIncorrect = true;
+            inputIncorrect = true;
         }
     }
 
@@ -147,7 +145,7 @@
     }
 
     function clearFeedback() {
-        gameInputIncorrect = false;
+        inputIncorrect = false;
         gameFeedback = '';
     }
 
@@ -155,13 +153,14 @@
 
 <svelte:head>
     <title>Ayo Belajar Membaca!</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <!-- Path to Tone.js relative to the new folder structure -->
+    <script src="../../asset/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="flex items-center justify-center min-h-screen bg-sky-100 p-4">
+<div class="flex items-center justify-center min-h-screen p-4">
 
     {#if screen === 'setup'}
         <div class="card text-center w-full max-w-sm sm:max-w-md">
@@ -172,7 +171,8 @@
                 <button on:click={() => handleModeSelect('learn-reading')} class="btn-primary w-full text-lg">Belajar Membaca</button>
                 <button on:click={() => handleModeSelect('typing-game')} class="btn-primary w-full text-lg">Game Mengetik</button>
             </div>
-            <a href="index.html" class="inline-block mt-8 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
+            <!-- Path to index.html relative to the new folder structure -->
+            <a href="../../index.html" class="inline-block mt-8 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
         </div>
     {/if}
 
@@ -206,11 +206,11 @@
             <div class="flex items-center justify-center space-x-2 sm:space-x-4 md:space-x-6 mb-6">
                 <input type="text" bind:value={gameInputValue} on:input={clearFeedback} on:keydown={(e) => e.key === 'Enter' && checkGameAnswer()}
                        class="answer-input p-2"
-                       class:correct={gameInputCorrect}
-                       class:incorrect={gameInputIncorrect}
+                       class:correct={inputCorrect}
+                       class:incorrect={inputIncorrect}
                        autofocus>
             </div>
-            <p class="feedback-message font-semibold" class:text-green-600={gameInputCorrect} class:text-red-600={gameInputIncorrect}>{gameFeedback}</p>
+            <p class="feedback-message font-semibold" class:text-green-600={inputCorrect} class:text-red-600={inputIncorrect}>{gameFeedback}</p>
             <button on:click={() => screen = 'setup'} class="mt-8 text-sm font-semibold text-blue-600 hover:text-blue-800">← Kembali ke Menu</button>
         </div>
     {/if}
@@ -239,6 +239,9 @@
     :global(body) {
         @apply font-['Poppins',_sans-serif] bg-sky-100;
     }
+    .card {
+        @apply bg-white rounded-2xl shadow-xl p-6 sm:p-8;
+    }
     .btn-primary {
         @apply bg-blue-500 text-white font-semibold py-3 px-6 rounded-xl transition hover:bg-blue-600 hover:-translate-y-0.5;
     }
@@ -250,7 +253,8 @@
     }
     .display-text {
         @apply font-bold text-gray-800;
-        font-size: clamp(4rem, 25vw, 10rem);
+        /* UPDATED: Adjusted clamp for better mobile view */
+        font-size: clamp(3.5rem, 22vw, 8rem);
     }
     .game-word {
         @apply font-bold text-gray-800;

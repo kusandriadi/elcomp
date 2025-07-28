@@ -40,6 +40,14 @@
         pattern_recognition: 'Pengenalan Pola'
     };
 
+    const gradeLabels = {
+        'tk': 'TK Besar',
+        '1': 'Kelas 1 SD',
+        '2': 'Kelas 2 SD',
+        '3': 'Kelas 3 SD',
+        '4': 'Kelas 4 SD'
+    };
+
     let availableOps = settings[currentGrade].ops;
 
     // --- Utility ---
@@ -209,9 +217,7 @@
         questionCounter = 0;
         correctAnswersCounter = 0;
 
-        const gradeOption = document.querySelector(`#grade-select option[value="${currentGrade}"]`);
-        const opOption = document.querySelector(`#operation-select option[value="${currentOperation}"]`);
-        levelInfoText = `<strong>Kelas:</strong> ${gradeOption.textContent}<br><strong>Latihan:</strong> ${opOption.textContent}`;
+        levelInfoText = `<strong>Kelas:</strong> ${gradeLabels[currentGrade]}<br><strong>Latihan:</strong> ${operationLabels[currentOperation]}`;
 
         screen = 'game';
         generateQuestion();
@@ -227,7 +233,8 @@
 
 <svelte:head>
     <title>Ayo Belajar Berhitung!</title>
-    <script src="asset/Tone.js"></script>
+    <!-- UPDATED: Path changed to be relative to the new folder structure -->
+    <script src="../../asset/Tone.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -263,7 +270,8 @@
                 <button on:click={() => screen = 'multiplicationTable'} class="text-sm font-semibold text-blue-600 hover:text-blue-800">Tabel Perkalian</button>
                 <button on:click={() => screen = 'divisionTable'} class="text-sm font-semibold text-blue-600 hover:text-blue-800">Tabel Pembagian</button>
             </div>
-            <a href="index.html" class="inline-block mt-6 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
+            <!-- UPDATED: Path changed to be relative to the new folder structure -->
+            <a href="../../index.html" class="inline-block mt-6 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
         </div>
     {/if}
 
