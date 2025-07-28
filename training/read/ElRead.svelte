@@ -21,10 +21,11 @@
     let typingWord = '';
     let userInput = '';
     let typingScore = 0;
-    let typingTimer = 20; // PERUBAHAN: Countdown diubah menjadi 20 detik
-    let typingInterval;
     let isTypingCorrect = null;
     let synth;
+    // PERUBAHAN: Game sekarang berbasis jumlah soal, bukan waktu
+    let questionNumber = 1;
+    const totalQuestions = 10;
 
     onMount(() => {
         if (window.Tone) {
@@ -37,7 +38,6 @@
         if (synth) {
             synth.dispose();
         }
-        clearInterval(typingInterval);
         window.speechSynthesis.cancel();
     });
 
@@ -88,10 +88,11 @@
 
     function startTypingGame() {
         typingScore = 0;
+        questionNumber = 1;
         isTypingCorrect = null;
         userInput = '';
         nextTypingWord();
-        startGameTimer();
+        screen = 'typing-game';
     }
 
     function nextTypingWord() {
@@ -99,59 +100,59 @@
         typingWord = words[Math.floor(Math.random() * words.length)];
     }
 
-    function checkTyping() {
-        // PERBAIKAN: Logika pengecekan diperbaiki untuk mencegah nada ganda
+    // PERUBAHAN: Fungsi ini sekarang menangani submit, bukan setiap ketikan
+    function submitAnswer() {
+        if (!userInput) return;
+
         if (userInput.toLowerCase() === typingWord.toLowerCase()) {
             isTypingCorrect = true;
             playTone('correct');
             typingScore++;
-            setTimeout(() => {
-                userInput = '';
-                nextTypingWord();
-                isTypingCorrect = null;
-            }, 300);
         } else {
             isTypingCorrect = false;
-            if (userInput.length === typingWord.length) {
-                playTone('incorrect');
-            }
+            playTone('incorrect');
         }
-    }
 
-    function startGameTimer() {
-        typingTimer = 20; // PERUBAHAN: Countdown diubah menjadi 20 detik
-        clearInterval(typingInterval);
-        typingInterval = setInterval(() => {
-            typingTimer--;
-            if (typingTimer <= 0) {
-                clearInterval(typingInterval);
+        // Cek apakah permainan sudah selesai
+        if (questionNumber >= totalQuestions) {
+            setTimeout(() => {
                 screen = 'typing-score';
                 playTone('finished');
                 setTimeout(() => {
                     playSound(getMotivationalMessage());
-                }, 500);
-            }
-        }, 1000);
+                }, 500); // Pastikan ada jeda agar nada selesai
+            }, 500);
+        } else {
+            // Lanjut ke soal berikutnya
+            setTimeout(() => {
+                questionNumber++;
+                userInput = '';
+                nextTypingWord();
+                isTypingCorrect = null;
+            }, 500);
+        }
     }
 
     function getMotivationalMessage() {
+        const finalScore = typingScore * 10;
         const messages = [
-            `Hebat, kamu dapat ${typingScore} poin! Terus berlatih ya!`,
-            `Luar biasa! Skor kamu ${typingScore}. Coba lagi yuk!`,
-            `Keren! Kamu berhasil mengumpulkan ${typingScore} poin. Semangat!`,
+            `Hebat, kamu dapat ${finalScore} poin! Terus berlatih ya!`,
+            `Luar biasa! Skor kamu ${finalScore}. Coba lagi yuk!`,
+            `Keren! Kamu berhasil mengumpulkan ${finalScore} poin. Semangat!`,
         ];
         return messages[Math.floor(Math.random() * messages.length)];
     }
 
     function startMode(mode) {
         currentMode = mode;
-        screen = mode;
         if (mode === 'learn-reading') {
             nextWord();
+            screen = mode;
         } else if (mode === 'typing-game') {
             startTypingGame();
         } else if (mode === 'learn-letters') {
             changeLetter();
+            screen = mode;
         }
     }
 
@@ -237,31 +238,34 @@
     {:else if screen === 'typing-game'}
         <div class="card text-center">
             <div class="flex justify-between items-center mb-6">
-                <div class="timer-container">
-                    {#each {length: 20} as _, i}
-                        <div class="timer-dot" class:active={i < typingTimer} class:inactive={i >= typingTimer}></div>
-                    {/each}
-                </div>
-                <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore}</span></div>
+                <div class="text-lg">Soal: <span class="font-bold">{questionNumber} / {totalQuestions}</span></div>
+                <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore * 10}</span></div>
             </div>
 
             <p class="question-display mb-4">{typingWord}</p>
-            <input type="text" bind:value={userInput} on:input={checkTyping}
-                   class="input-field mb-4"
-                   class:input-correct={isTypingCorrect === true}
-                   class:input-incorrect={isTypingCorrect === false}
-                   placeholder="Ketik di sini..."
-                   autocomplete="off">
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Kembali</button>
+
+            <form on:submit|preventDefault={submitAnswer} class="flex items-center gap-2">
+                <input type="text" bind:value={userInput}
+                       class="input-field flex-grow"
+                       class:input-correct={isTypingCorrect === true}
+                       class:input-incorrect={isTypingCorrect === false}
+                       placeholder="Ketik di sini..."
+                       autocomplete="off">
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-xl flex items-center justify-center transition shadow-md transform hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </button>
+            </form>
+
+            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-6">Kembali</button>
         </div>
 
     {:else if screen === 'typing-score'}
         <div class="card text-center">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h2>
             <p class="text-lg text-gray-700 mb-6">Skor akhir kamu adalah:</p>
-            <p class="text-6xl font-bold text-green-600 mb-8">{typingScore}</p>
-            <button on:click={() => startMode('typing-game')} class="btn-primary mb-4">Main Lagi</button>
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Kembali</button>
+            <p class="text-6xl font-bold text-green-600 mb-8">{typingScore * 10}</p>
+            <button on:click={startTypingGame} class="btn-primary mb-4">Main Lagi</button>
+            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-2">Kembali</button>
         </div>
 
     {/if}
