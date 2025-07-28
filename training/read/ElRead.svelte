@@ -172,7 +172,7 @@
                 <button on:click={() => handleModeSelect('typing-game')} class="btn-primary w-full text-lg">Game Mengetik</button>
             </div>
             <!-- Path to index.html relative to the new folder structure -->
-            <a href="../../index.html" class="inline-block mt-8 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
+            <a href="../../backup/index.html" class="inline-block mt-8 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
         </div>
     {/if}
 

@@ -271,7 +271,7 @@
                 <button on:click={() => screen = 'divisionTable'} class="text-sm font-semibold text-blue-600 hover:text-blue-800">Tabel Pembagian</button>
             </div>
             <!-- UPDATED: Path changed to be relative to the new folder structure -->
-            <a href="../../index.html" class="inline-block mt-6 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
+            <a href="../../backup/index.html" class="inline-block mt-6 text-sm font-semibold text-gray-700 hover:text-gray-900">← Kembali ke Menu Utama</a>
         </div>
     {/if}
 
