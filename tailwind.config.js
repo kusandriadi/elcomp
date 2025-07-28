@@ -2,7 +2,8 @@
 export default {
   content: [
     "./index.html",
-    "./**/*.svelte", // Ini adalah cara paling bersih untuk memindai semua file Svelte
+    "./App.svelte", // Secara spesifik menunjuk ke App.svelte di root
+    "./training/**/*.svelte" // Memindai semua file .svelte di dalam folder training
   ],
   theme: {
     extend: {
