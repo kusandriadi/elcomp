@@ -1,192 +1,19 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
+    import LearnLetters from './components/LearnLetters.svelte';
+    import LearnReading from './components/LearnReading.svelte';
+    import TypingGame from './components/TypingGame.svelte';
+    import TypingScore from './components/TypingScore.svelte';
 
-    let screen = 'setup'; // 'setup', 'learn-letters', 'learn-reading', 'typing-game'
-    let currentMode = '';
+    let screen = 'setup'; // setup, learn-letters, learn-reading, typing-game, typing-score
+    let finalScore = 0;
 
-    // State untuk "Mengenal Huruf"
-    let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    let currentLetter = 'a';
-
-    // State untuk "Belajar Membaca"
-    let readingLevel = 'level1';
-    let readingWords = {
-        level1: ["ba", "bi", "bu", "be", "bo", "ca", "ci", "cu", "ce", "co", "da", "di", "du", "de", "do", "fa", "fi","fu","fe","fo"],
-        level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu", "botol", "lampu", "kain", "rambut", "tangan"],
-        level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih", "siapa nama kamu?", "saya sudah makan" ]
-    };
-    let currentWord = '';
-
-    // State untuk "Game Mengetik"
-    let typingWord = '';
-    let userInput = '';
-    let typingScore = 0;
-    let isTypingCorrect = null;
-    let synth;
-    let questionNumber = 1;
-    const totalQuestions = 10;
-    let typingTimer = 20;
-    let typingInterval;
-
-    onMount(() => {
-        if (window.Tone) {
-            synth = new window.Tone.Synth().toDestination();
-        }
-        window.speechSynthesis.cancel();
-    });
-
-    onDestroy(() => {
-        if (synth) {
-            synth.dispose();
-        }
-        clearInterval(typingInterval);
-        window.speechSynthesis.cancel();
-    });
-
-    function playSound(text) {
-        if (!text) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
-        utterance.lang = 'id-ID';
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function playTone(note) {
-        if (synth) {
-            const now = window.Tone.now();
-            if (note === 'correct') {
-                synth.triggerAttackRelease('C5', '16n', now);
-            } else if (note === 'incorrect') {
-                synth.triggerAttackRelease('G#2', '16n', now);
-            } else if (note === 'finished') {
-                synth.triggerAttackRelease('C4', '8n', now);
-                synth.triggerAttackRelease('E4', '8n', now + 0.1);
-                synth.triggerAttackRelease('G4', '8n', now + 0.2);
-                synth.triggerAttackRelease('C5', '8n', now + 0.3);
-            }
+    function handleSwitch(event) {
+        screen = event.detail.screen;
+        if (event.detail.score !== undefined) {
+            finalScore = event.detail.score;
         }
     }
-
-    function changeLetter() {
-        let newLetter = currentLetter;
-        while (newLetter === currentLetter) {
-            newLetter = letters[Math.floor(Math.random() * letters.length)];
-        }
-        currentLetter = newLetter;
-    }
-
-    function nextWord() {
-        const words = readingWords[readingLevel];
-        let newWord = currentWord;
-        while (newWord === currentWord) {
-            newWord = words[Math.floor(Math.random() * words.length)];
-        }
-        currentWord = newWord;
-    }
-
-    function onLevelChange() {
-        nextWord();
-    }
-
-    function startTypingGame() {
-        typingScore = 0;
-        questionNumber = 1;
-        isTypingCorrect = null;
-        userInput = '';
-        nextTypingWord();
-        startQuestionTimer();
-        screen = 'typing-game';
-    }
-
-    function nextTypingWord() {
-        const words = readingWords.level2;
-        typingWord = words[Math.floor(Math.random() * words.length)];
-    }
-
-    function submitAnswer() {
-        if (!userInput) return;
-
-        if (userInput.toLowerCase() === typingWord.toLowerCase()) {
-            isTypingCorrect = true;
-            playTone('correct');
-            typingScore++;
-        } else {
-            isTypingCorrect = false;
-            playTone('incorrect');
-        }
-
-        moveToNextQuestion();
-    }
-
-    function moveToNextQuestion() {
-        clearInterval(typingInterval);
-        if (questionNumber >= totalQuestions) {
-            setTimeout(endGame, 500);
-        } else {
-            setTimeout(() => {
-                questionNumber++;
-                userInput = '';
-                nextTypingWord();
-                isTypingCorrect = null;
-                startQuestionTimer();
-            }, 500);
-        }
-    }
-
-    function startQuestionTimer() {
-        typingTimer = 20;
-        clearInterval(typingInterval);
-        typingInterval = setInterval(() => {
-            typingTimer--;
-            if (typingTimer <= 0) {
-                playTone('incorrect');
-                moveToNextQuestion();
-            }
-        }, 1000);
-    }
-
-    function endGame() {
-        screen = 'typing-score';
-        playTone('finished');
-        setTimeout(() => {
-            playSound(getMotivationalMessage());
-        }, 500);
-    }
-
-    function getMotivationalMessage() {
-        const finalScore = typingScore * 10;
-        const messages = [
-            `Hebat, kamu dapat ${finalScore} poin! Terus berlatih ya!`,
-            `Luar biasa! Skor kamu ${finalScore}. Coba lagi yuk!`,
-            `Keren! Kamu berhasil mengumpulkan ${finalScore} poin. Semangat!`,
-        ];
-        return messages[Math.floor(Math.random() * messages.length)];
-    }
-
-    function startMode(mode) {
-        currentMode = mode;
-        if (mode === 'learn-reading') {
-            nextWord();
-            screen = mode;
-        } else if (mode === 'typing-game') {
-            startTypingGame();
-        } else if (mode === 'learn-letters') {
-            changeLetter();
-            screen = mode;
-        }
-    }
-
-    function backToSetup() {
-        screen = 'setup';
-        currentMode = '';
-        clearInterval(typingInterval);
-    }
-
 </script>
-
-<svelte:head>
-    <title>Ayo Belajar Membaca!</title>
-</svelte:head>
 
 <div class="flex items-center justify-center min-h-screen p-4 font-poppins">
     {#if screen === 'setup'}
@@ -194,108 +21,32 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Ayo Belajar Membaca!</h1>
             <p class="text-base text-gray-600 mb-8">Pilih latihan yang kamu suka di bawah ini.</p>
             <div class="space-y-4">
-                <button on:click={() => startMode('learn-letters')} class="btn-primary w-full text-lg">
+                <button on:click={() => screen = 'learn-letters'} class="btn-primary w-full text-lg">
                     📚 Mengenal Huruf
                 </button>
-                <button on:click={() => startMode('learn-reading')} class="btn-primary w-full text-lg">
+                <button on:click={() => screen = 'learn-reading'} class="btn-primary w-full text-lg">
                     📖 Belajar Membaca
                 </button>
-                <button on:click={() => startMode('typing-game')} class="btn-primary w-full text-lg">
+                <button on:click={() => screen = 'typing-game'} class="btn-primary w-full text-lg">
                     ⌨️ Game Mengetik
                 </button>
             </div>
         </div>
+    {/if}
 
-    {:else if screen === 'learn-letters'}
-        <div class="card text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Mengenal Huruf</h2>
+    {#if screen === 'learn-letters'}
+        <LearnLetters on:switch={handleSwitch} />
+    {/if}
 
-            <div class="relative bg-sky-200 w-64 h-48 mx-auto flex items-center justify-center rounded-3xl mb-6">
-                <span class="text-8xl font-bold text-sky-800">{currentLetter.toUpperCase()}{currentLetter.toLowerCase()}</span>
+    {#if screen === 'learn-reading'}
+        <LearnReading on:switch={handleSwitch} />
+    {/if}
 
-                <button on:click={() => playSound(currentLetter)} class="absolute bottom-3 right-3 bg-green-500 text-white w-14 h-14 rounded-full hover:bg-green-600 transition shadow-md flex items-center justify-center transform hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                </button>
-            </div>
+    {#if screen === 'typing-game'}
+        <TypingGame on:switch={handleSwitch} />
+    {/if}
 
-            <div class="flex justify-center gap-4">
-                <button on:click={changeLetter} class="bg-blue-500 text-white font-bold text-3xl w-24 h-16 rounded-2xl hover:bg-blue-600 transition shadow-md">←</button>
-                <button on:click={changeLetter} class="bg-blue-500 text-white font-bold text-3xl w-24 h-16 rounded-2xl hover:bg-blue-600 transition shadow-md">→</button>
-            </div>
-
-            <button on:click={backToSetup} class="mt-8 text-gray-600 hover:text-gray-800 font-semibold">Kembali</button>
-        </div>
-
-    {:else if screen === 'learn-reading'}
-        <div class="card text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Belajar Membaca</h2>
-            <select bind:value={readingLevel} on:change={onLevelChange} class="form-select mb-6 w-full max-w-xs mx-auto">
-                <option value="level1">Level 1: Suku Kata</option>
-                <option value="level2">Level 2: Kata Pendek</option>
-                <option value="level3">Level 3: Kalimat</option>
-            </select>
-
-            <div class="relative bg-green-200 p-8 rounded-3xl mb-6">
-                <p class="text-5xl font-bold text-green-800">{currentWord}</p>
-                <button on:click={() => playSound(currentWord)} class="absolute bottom-3 right-3 bg-green-500 text-white w-14 h-14 rounded-full hover:bg-green-600 transition shadow-md flex items-center justify-center transform hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="flex justify-center gap-4">
-                <button on:click={nextWord} class="bg-blue-500 text-white font-bold text-3xl w-24 h-16 rounded-2xl hover:bg-blue-600 transition shadow-md">←</button>
-                <button on:click={nextWord} class="bg-blue-500 text-white font-bold text-3xl w-24 h-16 rounded-2xl hover:bg-blue-600 transition shadow-md">→</button>
-            </div>
-
-            <button on:click={backToSetup} class="mt-8 text-gray-600 hover:text-gray-800 font-semibold block w-full">Kembali</button>
-        </div>
-
-    {:else if screen === 'typing-game'}
-        <div class="card text-center">
-            <div class="flex justify-between items-center mb-4">
-                <div class="text-lg">Soal: <span class="font-bold">{questionNumber} / {totalQuestions}</span></div>
-                <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore * 10}</span></div>
-            </div>
-
-            <div class="timer-container mb-6">
-                {#each {length: 20} as _, i}
-                    <div class="timer-dot" class:active={i < typingTimer} class:inactive={i >= typingTimer}></div>
-                {/each}
-            </div>
-
-            <p class="question-display mb-4">{typingWord}</p>
-
-            <form on:submit|preventDefault={submitAnswer} class="flex items-center gap-2">
-                <input type="text" bind:value={userInput}
-                       class="input-field flex-grow"
-                       class:input-correct={isTypingCorrect === true}
-                       class:input-incorrect={isTypingCorrect === false}
-                       placeholder="Ketik di sini..."
-                       autocomplete="off">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-xl flex items-center justify-center transition shadow-md transform hover:scale-110">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                </button>
-            </form>
-
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-6">Kembali</button>
-        </div>
-
-    {:else if screen === 'typing-score'}
-        <div class="card text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h2>
-            <p class="text-lg text-gray-700 mb-6">Skor akhir kamu adalah:</p>
-            <p class="text-6xl font-bold text-green-600 mb-8">{typingScore * 10}</p>
-            <div class="flex flex-col items-center">
-                <button on:click={startTypingGame} class="btn-primary mb-4 w-full max-w-xs">Main Lagi</button>
-                <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-2">Kembali</button>
-            </div>
-        </div>
-
+    {#if screen === 'typing-score'}
+        <TypingScore score={finalScore} on:switch={handleSwitch} />
     {/if}
 </div>
