@@ -4,7 +4,7 @@
 
     let typingWord = '';
     let userInput = '';
-    let trainingscore = 0;
+    let typingScore = 0;
     let isTypingCorrect = null;
     let synth;
     let questionNumber = 1;
@@ -16,7 +16,9 @@
     let shuffledWords = [];
     let wordIndex = 0;
 
-    // Fungsi untuk mengocok array
+    // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
+    let inputElement;
+
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -29,9 +31,11 @@
         if (window.Tone) {
             synth = new window.Tone.Synth().toDestination();
         }
-        shuffledWords = shuffle([...words]); // Kocok daftar kata saat komponen dimuat
+        shuffledWords = shuffle([...words]);
         nextTypingWord();
         startQuestionTimer();
+        // Fokus saat komponen pertama kali dimuat
+        inputElement?.focus();
     });
 
     onDestroy(() => {
@@ -49,9 +53,7 @@
         }
     }
 
-    // PERUBAHAN: Mengambil kata dari daftar yang sudah diacak
     function nextTypingWord() {
-        // Jika sudah sampai akhir, kocok lagi
         if (wordIndex >= shuffledWords.length) {
             wordIndex = 0;
             shuffledWords = shuffle([...words]);
@@ -65,7 +67,7 @@
         if (userInput.toLowerCase() === typingWord.toLowerCase()) {
             isTypingCorrect = true;
             playTone('correct');
-            trainingscore++;
+            typingScore++;
         } else {
             isTypingCorrect = false;
             playTone('incorrect');
@@ -76,7 +78,7 @@
     function moveToNextQuestion() {
         clearInterval(typingInterval);
         if (questionNumber >= totalQuestions) {
-            setTimeout(() => dispatch('switch', { screen: 'training-score', score: trainingscore }), 500);
+            setTimeout(() => dispatch('switch', { screen: 'typing-score', score: typingScore }), 500);
         } else {
             setTimeout(() => {
                 questionNumber++;
@@ -84,6 +86,8 @@
                 nextTypingWord();
                 isTypingCorrect = null;
                 startQuestionTimer();
+                // PERUBAHAN 2: Fokus dipanggil secara eksplisit untuk soal berikutnya
+                inputElement?.focus();
             }, 500);
         }
     }
@@ -92,8 +96,8 @@
         typingTimer = 20;
         clearInterval(typingInterval);
         typingInterval = setInterval(() => {
-            typingTimer--;
-            if (typingTimer <= 0) {
+            timer--;
+            if (timer <= 0) {
                 playTone('incorrect');
                 moveToNextQuestion();
             }
@@ -108,7 +112,7 @@
 <div class="card text-center">
     <div class="flex justify-between items-center mb-4">
         <div class="text-lg">Soal: <span class="font-bold">{questionNumber} / {totalQuestions}</span></div>
-        <div class="text-lg">Skor: <span class="font-bold text-green-600">{trainingscore * 10}</span></div>
+        <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore * 10}</span></div>
     </div>
 
     <div class="timer-container mb-6">
@@ -120,7 +124,7 @@
     <p class="question-display mb-4">{typingWord}</p>
 
     <form on:submit|preventDefault={submitAnswer} class="flex items-center gap-2">
-        <input type="text" bind:value={userInput}
+        <input type="text" bind:this={inputElement} bind:value={userInput}
                class="input-field flex-grow"
                class:input-correct={isTypingCorrect === true}
                class:input-incorrect={isTypingCorrect === false}
