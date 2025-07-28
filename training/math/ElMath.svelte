@@ -22,7 +22,7 @@
         { value: 'pengurangan', label: 'Pengurangan (-)' },
         { value: 'perkalian', label: 'Perkalian (x)' },
         { value: 'pembagian', label: 'Pembagian (÷)' },
-        { value: 'campuran', label: 'Operasi Campuran Acak' }
+        { value: 'campuran', label: 'Campuran' }
     ];
     let availableOperations = [];
 
