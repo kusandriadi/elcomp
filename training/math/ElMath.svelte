@@ -48,7 +48,7 @@
                 <div>
                     <label for="level-select" class="block text-base font-bold text-gray-700 mb-2">Tingkat</label>
                     <select id="level-select" bind:value={level} class="form-select w-full">
-                        <option value="tk">TK (Angka 1-10)</option>
+                        <option value="tk">TK</option>
                         <option value="1">Kelas 1</option>
                         <option value="2">Kelas 2</option>
                         <option value="3">Kelas 3</option>
