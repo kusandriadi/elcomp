@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
 
     let screen = 'setup'; // 'setup', 'learn-letters', 'learn-reading', 'typing-game'
     let currentMode = '';
@@ -7,7 +7,6 @@
     // State untuk "Mengenal Huruf"
     let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
     let currentLetter = 'a';
-    let synth;
 
     // State untuk "Belajar Membaca"
     let readingLevel = 'level1';
@@ -17,7 +16,6 @@
         level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih"]
     };
     let currentWord = '';
-    let readingFeedback = '';
 
     // State untuk "Game Mengetik"
     let typingWord = '';
@@ -28,24 +26,27 @@
     let isTypingCorrect = null;
 
     onMount(() => {
-        // Inisialisasi Tone.js synth jika belum ada
-        if (window.Tone) {
-            synth = new window.Tone.Synth().toDestination();
-        }
+        // Hentikan suara apa pun yang mungkin masih berjalan saat komponen dimuat
+        window.speechSynthesis.cancel();
     });
 
+    onDestroy(() => {
+        clearInterval(typingInterval);
+        // Hentikan suara saat meninggalkan halaman
+        window.speechSynthesis.cancel();
+    });
+
+    // PERBAIKAN: Fungsi ini sekarang selalu menggunakan SpeechSynthesis
     function playSound(text) {
-        if (synth && text) {
-            // Menggunakan speech synthesis jika Tone.js tidak bisa mengucapkan kata
-            if (text.length > 1) {
-                const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
-                utterance.lang = 'id-ID';
-                window.speechSynthesis.speak(utterance);
-            } else {
-                // Untuk satu huruf, Tone.js bisa digunakan
-                synth.triggerAttackRelease(text.toUpperCase() + '4', '8n');
-            }
-        }
+        if (!text) return;
+
+        // Selalu batalkan suara yang sedang berjalan
+        window.speechSynthesis.cancel();
+
+        // Gunakan Speech Synthesis untuk semua teks, baik huruf maupun kata
+        const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
+        utterance.lang = 'id-ID'; // Set bahasa ke Indonesia
+        window.speechSynthesis.speak(utterance);
     }
 
     function changeLetter(dir) {
@@ -54,12 +55,10 @@
         if (newIndex < 0) newIndex = letters.length - 1;
         if (newIndex >= letters.length) newIndex = 0;
         currentLetter = letters[newIndex];
-        playSound(currentLetter);
     }
 
     function startReading() {
         nextWord();
-        readingFeedback = '';
     }
 
     function nextWord() {
@@ -77,7 +76,7 @@
     }
 
     function nextTypingWord() {
-        const words = readingWords.level2; // Menggunakan level 2 untuk mengetik
+        const words = readingWords.level2;
         typingWord = words[Math.floor(Math.random() * words.length)];
     }
 
@@ -123,7 +122,6 @@
     function backToSetup() {
         screen = 'setup';
         currentMode = '';
-        clearInterval(typingInterval);
     }
 
 </script>
@@ -153,9 +151,18 @@
     {:else if screen === 'learn-letters'}
         <div class="card text-center">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Mengenal Huruf</h2>
-            <div on:click={() => playSound(currentLetter)} class="bg-sky-200 w-48 h-48 mx-auto flex items-center justify-center rounded-3xl cursor-pointer mb-6">
-                <span class="text-8xl font-bold text-sky-800">{currentLetter.toUpperCase()}</span>
+
+            <div class="bg-sky-200 w-64 h-48 mx-auto flex items-center justify-center rounded-3xl mb-4">
+                <span class="text-8xl font-bold text-sky-800">{currentLetter.toUpperCase()}{currentLetter.toLowerCase()}</span>
             </div>
+
+            <button on:click={() => playSound(currentLetter)} class="bg-green-500 text-white w-20 h-20 rounded-full hover:bg-green-600 transition shadow-md flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+            </button>
+
             <div class="flex justify-center gap-4">
                 <button on:click={() => changeLetter(-1)} class="bg-blue-500 text-white font-bold text-3xl w-16 h-16 rounded-full hover:bg-blue-600 transition shadow-md">←</button>
                 <button on:click={() => changeLetter(1)} class="bg-blue-500 text-white font-bold text-3xl w-16 h-16 rounded-full hover:bg-blue-600 transition shadow-md">→</button>
@@ -187,7 +194,8 @@
                    class="input-field mb-4"
                    class:input-correct={isTypingCorrect === true}
                    class:input-incorrect={isTypingCorrect === false}
-                   placeholder="Ketik di sini...">
+                   placeholder="Ketik di sini..."
+                   autocomplete="off">
             <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Keluar dari Game</button>
         </div>
 
