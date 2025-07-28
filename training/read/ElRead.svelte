@@ -2,9 +2,9 @@
     import LearnLetters from './components/LearnLetters.svelte';
     import LearnReading from './components/LearnReading.svelte';
     import TypingGame from './components/TypingGame.svelte';
-    import TypingScore from './components/TypingScore.svelte';
+    import TrainingScore from '../TrainingScore.svelte';
 
-    let screen = 'setup'; // setup, learn-letters, learn-reading, typing-game, typing-score
+    let screen = 'setup'; // setup, learn-letters, learn-reading, typing-game, training-score
     let finalScore = 0;
 
     function handleSwitch(event) {
@@ -46,7 +46,7 @@
         <TypingGame on:switch={handleSwitch} />
     {/if}
 
-    {#if screen === 'typing-score'}
-        <TypingScore score={finalScore} on:switch={handleSwitch} />
+    {#if screen === 'training-score'}
+        <TrainingScore score={finalScore} on:switch={handleSwitch} />
     {/if}
 </div>

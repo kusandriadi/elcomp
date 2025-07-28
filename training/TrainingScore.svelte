@@ -49,11 +49,11 @@
 </script>
 
 <div class="card text-center">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Waktu Habis!</h2>
     <p class="text-lg text-gray-700 mb-6">Skor akhir kamu adalah:</p>
     <p class="text-6xl font-bold text-green-600 mb-8">{score * 10}</p>
     <div class="flex flex-col items-center">
-        <button on:click={playAgain} class="btn-primary mb-4 w-full max-w-xs">Main Lagi</button>
+        <button on:click={playAgain} class="btn-primary mb-4 w-full max-w-xs">Coba Lagi</button>
         <button on:click={goBack} class="text-gray-600 hover:text-gray-800 font-semibold mt-2">Kembali</button>
     </div>
 </div>
