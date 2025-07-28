@@ -2,10 +2,22 @@
   import ElRead from './training/read/ElRead.svelte';
   import ElMath from './training/math/ElMath.svelte';
 
-  let currentPage = 'home'; // 'home', 'reading', 'math'
+  let currentPage = 'home';
+  // 'home', 'reading', 'math'
 
   function navigateTo(page) {
     currentPage = page;
+  }
+
+  // PERUBAHAN: Fungsi baru untuk memulai audio konteks dan navigasi
+  async function startAndNavigate(page) {
+    // Cek apakah Tone.js ada dan audio belum berjalan
+    if (window.Tone && window.Tone.context.state !== 'running') {
+      // Memulai AudioContext, ini memerlukan interaksi pengguna (klik ini)
+      await window.Tone.start();
+    }
+    // Setelah audio siap, baru pindah halaman
+    navigateTo(page);
   }
 </script>
 
@@ -23,8 +35,7 @@
       <p class="text-base sm:text-lg text-gray-700 mb-8 sm:mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
 
       <div class="space-y-4 sm:space-y-6">
-        <!-- Tautan ke Aplikasi Membaca -->
-        <button on:click={() => navigateTo('reading')} class="btn-link bg-blue-500 hover:bg-blue-600 w-full">
+        <button on:click={() => startAndNavigate('reading')} class="btn-link bg-blue-500 hover:bg-blue-600 w-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
@@ -32,8 +43,7 @@
           <span class="text-base sm:text-xl">Belajar Membaca & Menulis</span>
         </button>
 
-        <!-- Tautan ke Aplikasi Matematika -->
-        <button on:click={() => navigateTo('math')} class="btn-link bg-green-600 hover:bg-green-700 w-full">
+        <button on:click={() => startAndNavigate('math')} class="btn-link bg-green-600 hover:bg-green-700 w-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20V4"></path>
             <path d="M4 12h16"></path>
@@ -48,7 +58,6 @@
 
 {:else if currentPage === 'reading'}
   <div class="min-h-screen bg-sky-100">
-    <!-- Back button -->
     <div class="p-4">
       <button on:click={() => navigateTo('home')} class="text-blue-600 hover:text-blue-800 font-semibold">
         ← Kembali ke Menu Utama
@@ -59,7 +68,6 @@
 
 {:else if currentPage === 'math'}
   <div class="min-h-screen bg-sky-100">
-    <!-- Back button -->
     <div class="p-4">
       <button on:click={() => navigateTo('home')} class="text-blue-600 hover:text-blue-800 font-semibold">
         ← Kembali ke Menu Utama
