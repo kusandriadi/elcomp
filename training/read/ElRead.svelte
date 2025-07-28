@@ -21,15 +21,22 @@
     let typingWord = '';
     let userInput = '';
     let typingScore = 0;
-    let typingTimer = 10;
+    let typingTimer = 20; // PERUBAHAN: Countdown diubah menjadi 20 detik
     let typingInterval;
     let isTypingCorrect = null;
+    let synth;
 
     onMount(() => {
+        if (window.Tone) {
+            synth = new window.Tone.Synth().toDestination();
+        }
         window.speechSynthesis.cancel();
     });
 
     onDestroy(() => {
+        if (synth) {
+            synth.dispose();
+        }
         clearInterval(typingInterval);
         window.speechSynthesis.cancel();
     });
@@ -42,6 +49,22 @@
         window.speechSynthesis.speak(utterance);
     }
 
+    function playTone(note) {
+        if (synth) {
+            const now = window.Tone.now();
+            if (note === 'correct') {
+                synth.triggerAttackRelease('C5', '16n', now);
+            } else if (note === 'incorrect') {
+                synth.triggerAttackRelease('G#2', '16n', now);
+            } else if (note === 'finished') {
+                synth.triggerAttackRelease('C4', '8n', now);
+                synth.triggerAttackRelease('E4', '8n', now + 0.1);
+                synth.triggerAttackRelease('G4', '8n', now + 0.2);
+                synth.triggerAttackRelease('C5', '8n', now + 0.3);
+            }
+        }
+    }
+
     function changeLetter() {
         let newLetter = currentLetter;
         while (newLetter === currentLetter) {
@@ -50,7 +73,6 @@
         currentLetter = newLetter;
     }
 
-    // PERUBAHAN: Fungsi ini sekarang hanya mengganti kata, tidak memutar suara
     function nextWord() {
         const words = readingWords[readingLevel];
         let newWord = currentWord;
@@ -60,7 +82,6 @@
         currentWord = newWord;
     }
 
-    // PERUBAHAN: Fungsi ini dipanggil saat mengganti level
     function onLevelChange() {
         nextWord();
     }
@@ -79,37 +100,53 @@
     }
 
     function checkTyping() {
+        // PERBAIKAN: Logika pengecekan diperbaiki untuk mencegah nada ganda
         if (userInput.toLowerCase() === typingWord.toLowerCase()) {
-            typingScore++;
             isTypingCorrect = true;
-            playSound('Benar');
+            playTone('correct');
+            typingScore++;
             setTimeout(() => {
                 userInput = '';
                 nextTypingWord();
                 isTypingCorrect = null;
-            }, 500);
+            }, 300);
         } else {
             isTypingCorrect = false;
+            if (userInput.length === typingWord.length) {
+                playTone('incorrect');
+            }
         }
     }
 
     function startGameTimer() {
-        typingTimer = 10;
+        typingTimer = 20; // PERUBAHAN: Countdown diubah menjadi 20 detik
         clearInterval(typingInterval);
         typingInterval = setInterval(() => {
             typingTimer--;
             if (typingTimer <= 0) {
                 clearInterval(typingInterval);
                 screen = 'typing-score';
+                playTone('finished');
+                setTimeout(() => {
+                    playSound(getMotivationalMessage());
+                }, 500);
             }
         }, 1000);
+    }
+
+    function getMotivationalMessage() {
+        const messages = [
+            `Hebat, kamu dapat ${typingScore} poin! Terus berlatih ya!`,
+            `Luar biasa! Skor kamu ${typingScore}. Coba lagi yuk!`,
+            `Keren! Kamu berhasil mengumpulkan ${typingScore} poin. Semangat!`,
+        ];
+        return messages[Math.floor(Math.random() * messages.length)];
     }
 
     function startMode(mode) {
         currentMode = mode;
         screen = mode;
         if (mode === 'learn-reading') {
-            // Memulai dengan kata acak tanpa suara
             nextWord();
         } else if (mode === 'typing-game') {
             startTypingGame();
@@ -199,8 +236,15 @@
 
     {:else if screen === 'typing-game'}
         <div class="card text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2">Game Mengetik</h2>
-            <p class="text-gray-600 mb-4">Waktu: <span class="font-bold">{typingTimer}</span> | Skor: <span class="font-bold text-green-600">{typingScore}</span></p>
+            <div class="flex justify-between items-center mb-6">
+                <div class="timer-container">
+                    {#each {length: 20} as _, i}
+                        <div class="timer-dot" class:active={i < typingTimer} class:inactive={i >= typingTimer}></div>
+                    {/each}
+                </div>
+                <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore}</span></div>
+            </div>
+
             <p class="question-display mb-4">{typingWord}</p>
             <input type="text" bind:value={userInput} on:input={checkTyping}
                    class="input-field mb-4"
@@ -208,16 +252,16 @@
                    class:input-incorrect={isTypingCorrect === false}
                    placeholder="Ketik di sini..."
                    autocomplete="off">
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Keluar dari Game</button>
+            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Kembali</button>
         </div>
 
     {:else if screen === 'typing-score'}
         <div class="card text-center">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Waktu Habis!</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h2>
             <p class="text-lg text-gray-700 mb-6">Skor akhir kamu adalah:</p>
             <p class="text-6xl font-bold text-green-600 mb-8">{typingScore}</p>
             <button on:click={() => startMode('typing-game')} class="btn-primary mb-4">Main Lagi</button>
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold">Kembali ke Menu</button>
+            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-4">Kembali</button>
         </div>
 
     {/if}
