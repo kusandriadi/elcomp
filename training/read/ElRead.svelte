@@ -64,31 +64,3 @@
         </div>
     {/if}
 </div>
-
-<style>
-    /* Inline styles untuk memastikan tampilan yang konsisten */
-    :global(.card) {
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 1.5rem;
-        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        max-width: 24rem;
-    }
-
-    :global(.btn-primary) {
-        background-color: #3b82f6;
-        color: white;
-        font-weight: 600;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.75rem;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-    }
-
-    :global(.btn-primary:hover) {
-        background-color: #2563eb;
-        transform: translateY(-2px);
-    }
-</style>

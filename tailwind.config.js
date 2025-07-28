@@ -2,9 +2,8 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,svelte}",
-    "./training/**/*.{js,ts,jsx,tsx,svelte}",
-    "./**/*.{js,ts,jsx,tsx,svelte}"
+    "./*.{svelte,js,ts}", // Memindai file di root
+    "./**/*.{svelte,js,ts}" // Memindai file di semua subdirektori
   ],
   theme: {
     extend: {
