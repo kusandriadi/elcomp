@@ -1,9 +1,25 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import { onMount, createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
 
     let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    let currentLetter = letters[Math.floor(Math.random() * letters.length)];
+    let shuffledLetters = [];
+    let currentIndex = 0;
+    let currentLetter = '';
+
+    // Fungsi untuk mengocok array (Fisher-Yates shuffle)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    onMount(() => {
+        shuffledLetters = shuffle([...letters]);
+        currentLetter = shuffledLetters[currentIndex];
+    });
 
     function playSound(text) {
         if (!text) return;
@@ -13,12 +29,15 @@
         window.speechSynthesis.speak(utterance);
     }
 
+    // PERUBAHAN: Logika sekarang mengambil huruf dari daftar yang sudah diacak
     function changeLetter() {
-        let newLetter = currentLetter;
-        while (newLetter === currentLetter) {
-            newLetter = letters[Math.floor(Math.random() * letters.length)];
+        currentIndex++;
+        // Jika sudah sampai akhir, kocok lagi dan mulai dari awal
+        if (currentIndex >= shuffledLetters.length) {
+            currentIndex = 0;
+            shuffledLetters = shuffle([...letters]);
         }
-        currentLetter = newLetter;
+        currentLetter = shuffledLetters[currentIndex];
     }
 
     function goBack() {

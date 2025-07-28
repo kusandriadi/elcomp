@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import { onMount, createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
 
     let readingLevel = 'level1';
@@ -8,7 +8,28 @@
         level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"],
         level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih"]
     };
-    let currentWord = readingWords[readingLevel][0];
+
+    let shuffledWords = {};
+    let wordIndices = {};
+    let currentWord = '';
+
+    // Fungsi untuk mengocok array (Fisher-Yates shuffle)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Menginisialisasi semua daftar kata yang sudah diacak
+    onMount(() => {
+        for (const level in readingWords) {
+            shuffledWords[level] = shuffle([...readingWords[level]]);
+            wordIndices[level] = 0;
+        }
+        currentWord = shuffledWords[readingLevel][0];
+    });
 
     function playSound(text) {
         if (!text) return;
@@ -18,13 +39,19 @@
         window.speechSynthesis.speak(utterance);
     }
 
+    // PERUBAHAN: Logika sekarang mengambil kata dari daftar yang sudah diacak
     function nextWord() {
-        const words = readingWords[readingLevel];
-        let newWord = currentWord;
-        while (newWord === currentWord) {
-            newWord = words[Math.floor(Math.random() * words.length)];
+        let currentIndex = wordIndices[readingLevel];
+        currentIndex++;
+
+        // Jika sudah sampai akhir, kocok lagi dan mulai dari awal
+        if (currentIndex >= shuffledWords[readingLevel].length) {
+            currentIndex = 0;
+            shuffledWords[readingLevel] = shuffle([...readingWords[readingLevel]]);
         }
-        currentWord = newWord;
+
+        wordIndices[readingLevel] = currentIndex;
+        currentWord = shuffledWords[readingLevel][currentIndex];
     }
 
     function goBack() {

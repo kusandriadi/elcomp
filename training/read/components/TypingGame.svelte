@@ -11,16 +11,27 @@
     const totalQuestions = 10;
     let typingTimer = 20;
     let typingInterval;
-    let readingWords = {
-        level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"]
-    };
+
+    let words = ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"];
+    let shuffledWords = [];
+    let wordIndex = 0;
+
+    // Fungsi untuk mengocok array
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
     onMount(() => {
         if (window.Tone) {
             synth = new window.Tone.Synth().toDestination();
         }
-        startQuestionTimer();
+        shuffledWords = shuffle([...words]); // Kocok daftar kata saat komponen dimuat
         nextTypingWord();
+        startQuestionTimer();
     });
 
     onDestroy(() => {
@@ -38,8 +49,15 @@
         }
     }
 
+    // PERUBAHAN: Mengambil kata dari daftar yang sudah diacak
     function nextTypingWord() {
-        typingWord = readingWords.level2[Math.floor(Math.random() * readingWords.level2.length)];
+        // Jika sudah sampai akhir, kocok lagi
+        if (wordIndex >= shuffledWords.length) {
+            wordIndex = 0;
+            shuffledWords = shuffle([...words]);
+        }
+        typingWord = shuffledWords[wordIndex];
+        wordIndex++;
     }
 
     function submitAnswer() {
