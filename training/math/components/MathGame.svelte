@@ -10,13 +10,14 @@
     const totalQuestions = 10;
     let timer = 20;
     let countdown;
-    // PERUBAHAN: Struktur state pertanyaan diubah untuk menampung teks soal
     let question = { text: '', answer: 0 };
     let userAnswer = '';
     let isCorrect = null;
     let synth;
-
     let useTimer = level !== 'tk' && level !== '1';
+
+    // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
+    let inputElement;
 
     onMount(() => {
         if (window.Tone) {
@@ -26,6 +27,8 @@
         if (useTimer) {
             startQuestionTimer();
         }
+        // Fokus saat komponen pertama kali dimuat
+        inputElement?.focus();
     });
 
     onDestroy(() => {
@@ -41,7 +44,6 @@
         }
     }
 
-    // --- PERUBAHAN BESAR PADA FUNGSI INI ---
     function generateQuestion() {
         let a, b, c, answer, text;
 
@@ -56,19 +58,16 @@
 
         let currentOp = operation;
 
-        // Logika baru untuk operasi campuran
         if (currentOp === 'campuran') {
             const templates = ['(a+b)*c', 'a*(b+c)', '(a*b)+c', 'a+(b*c)', '(a-b)*c', 'a*(b-c)', 'c*(a-b)', '(a*b)-c', 'a-(b*c)'];
-            // Untuk kelas 4, tambahkan soal pembagian
             if (level === '4') {
                 templates.push('a/(b-c)', '(a+b)/c');
             }
             const template = templates[Math.floor(Math.random() * templates.length)];
 
-            // Generate angka yang sesuai
             a = Math.floor(Math.random() * maxMult) + 1;
             b = Math.floor(Math.random() * maxMult) + 1;
-            c = Math.floor(Math.random() * maxMult) + (level === '3' ? 1 : 2); // 'c' sedikit lebih besar di kelas 4
+            c = Math.floor(Math.random() * maxMult) + (level === '3' ? 1 : 2);
 
             switch (template) {
                 case '(a+b)*c': answer = (a+b)*c; text = `(${a} + ${b}) × ${c}`; break;
@@ -87,7 +86,6 @@
             return;
         }
 
-        // Logika lama untuk operasi tunggal
         let symbol;
         switch (currentOp) {
             case 'pengurangan': a = Math.floor(Math.random() * maxNum) + 1; b = Math.floor(Math.random() * a); answer = a - b; symbol = '−'; break;
@@ -124,6 +122,8 @@
                 if (useTimer) {
                     startQuestionTimer();
                 }
+                // PERUBAHAN 2: Fokus dipanggil secara eksplisit di sini
+                inputElement?.focus();
             }, 500);
         }
     }
@@ -162,7 +162,7 @@
     <p class="question-display mb-4">{question.text}</p>
 
     <form on:submit|preventDefault={submitAnswer} class="flex items-center gap-2">
-        <input type="number" bind:value={userAnswer}
+        <input type="number" bind:this={inputElement} bind:value={userAnswer}
                class="input-field flex-grow"
                class:input-correct={isCorrect === true}
                class:input-incorrect={isCorrect === false}
