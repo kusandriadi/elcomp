@@ -11,9 +11,9 @@
     // State untuk "Belajar Membaca"
     let readingLevel = 'level1';
     let readingWords = {
-        level1: ["ba", "bi", "bu", "be", "bo", "ca", "ci", "cu", "ce", "co", "da", "di", "du", "de", "do"],
-        level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"],
-        level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih"]
+        level1: ["ba", "bi", "bu", "be", "bo", "ca", "ci", "cu", "ce", "co", "da", "di", "du", "de", "do", "fa", "fi","fu","fe","fo"],
+        level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu", "botol", "lampu", "kain", "rambut", "tangan"],
+        level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih", "siapa nama kamu?", "saya sudah makan" ]
     };
     let currentWord = '';
 
