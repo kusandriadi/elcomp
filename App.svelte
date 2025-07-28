@@ -50,8 +50,9 @@
 
         <button on:click={() => startAndNavigate('logic')} class="btn-link bg-purple-600 hover:bg-purple-700 w-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-            <path d="M12 17h.01"></path>
+            <path d="M9 18h6"></path>
+            <path d="M10 22h4"></path>
+            <path d="M12 2a7 7 0 0 0-7 7c0 3.04 1.63 5.5 4 6.58V20h6v-4.42c2.37-1.08 4-3.54 4-6.58a7 7 0 0 0-7-7Z"></path>
           </svg>
           <span class="text-base sm:text-xl">Logika</span>
         </button>
