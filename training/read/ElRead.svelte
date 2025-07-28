@@ -23,9 +23,10 @@
     let typingScore = 0;
     let isTypingCorrect = null;
     let synth;
-    // PERUBAHAN: Game sekarang berbasis jumlah soal, bukan waktu
     let questionNumber = 1;
     const totalQuestions = 10;
+    let typingTimer = 20;
+    let typingInterval;
 
     onMount(() => {
         if (window.Tone) {
@@ -38,6 +39,7 @@
         if (synth) {
             synth.dispose();
         }
+        clearInterval(typingInterval);
         window.speechSynthesis.cancel();
     });
 
@@ -92,6 +94,7 @@
         isTypingCorrect = null;
         userInput = '';
         nextTypingWord();
+        startQuestionTimer();
         screen = 'typing-game';
     }
 
@@ -100,7 +103,6 @@
         typingWord = words[Math.floor(Math.random() * words.length)];
     }
 
-    // PERUBAHAN: Fungsi ini sekarang menangani submit, bukan setiap ketikan
     function submitAnswer() {
         if (!userInput) return;
 
@@ -113,24 +115,42 @@
             playTone('incorrect');
         }
 
-        // Cek apakah permainan sudah selesai
+        moveToNextQuestion();
+    }
+
+    function moveToNextQuestion() {
+        clearInterval(typingInterval);
         if (questionNumber >= totalQuestions) {
-            setTimeout(() => {
-                screen = 'typing-score';
-                playTone('finished');
-                setTimeout(() => {
-                    playSound(getMotivationalMessage());
-                }, 500); // Pastikan ada jeda agar nada selesai
-            }, 500);
+            setTimeout(endGame, 500);
         } else {
-            // Lanjut ke soal berikutnya
             setTimeout(() => {
                 questionNumber++;
                 userInput = '';
                 nextTypingWord();
                 isTypingCorrect = null;
+                startQuestionTimer();
             }, 500);
         }
+    }
+
+    function startQuestionTimer() {
+        typingTimer = 20;
+        clearInterval(typingInterval);
+        typingInterval = setInterval(() => {
+            typingTimer--;
+            if (typingTimer <= 0) {
+                playTone('incorrect');
+                moveToNextQuestion();
+            }
+        }, 1000);
+    }
+
+    function endGame() {
+        screen = 'typing-score';
+        playTone('finished');
+        setTimeout(() => {
+            playSound(getMotivationalMessage());
+        }, 500);
     }
 
     function getMotivationalMessage() {
@@ -159,6 +179,7 @@
     function backToSetup() {
         screen = 'setup';
         currentMode = '';
+        clearInterval(typingInterval);
     }
 
 </script>
@@ -237,9 +258,15 @@
 
     {:else if screen === 'typing-game'}
         <div class="card text-center">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center mb-4">
                 <div class="text-lg">Soal: <span class="font-bold">{questionNumber} / {totalQuestions}</span></div>
                 <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore * 10}</span></div>
+            </div>
+
+            <div class="timer-container mb-6">
+                {#each {length: 20} as _, i}
+                    <div class="timer-dot" class:active={i < typingTimer} class:inactive={i >= typingTimer}></div>
+                {/each}
             </div>
 
             <p class="question-display mb-4">{typingWord}</p>
@@ -264,8 +291,10 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Permainan Selesai!</h2>
             <p class="text-lg text-gray-700 mb-6">Skor akhir kamu adalah:</p>
             <p class="text-6xl font-bold text-green-600 mb-8">{typingScore * 10}</p>
-            <button on:click={startTypingGame} class="btn-primary mb-4">Main Lagi</button>
-            <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-2">Kembali</button>
+            <div class="flex flex-col items-center">
+                <button on:click={startTypingGame} class="btn-primary mb-4 w-full max-w-xs">Main Lagi</button>
+                <button on:click={backToSetup} class="text-gray-600 hover:text-gray-800 font-semibold mt-2">Kembali</button>
+            </div>
         </div>
 
     {/if}
