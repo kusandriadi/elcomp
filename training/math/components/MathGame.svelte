@@ -78,70 +78,21 @@
     }
 
     function generateQuestion() {
-        let currentOp = operation;
+        const operationMap = {
+            'penjumlahan': () => additionComponent.generateAdditionQuestion(),
+            'pengurangan': () => substractionComponent.generateSubtractionQuestion(),
+            'perkalian': () => multiplicationComponent.generateMultiplicationQuestion(),
+            'pembagian': () => divisionComponent.generateDivisionQuestion(),
+            'campuran': () => mixedOperationComponent.generateMixedQuestion(),
+            'desimal': () => decimalComponent.generateDecimalQuestion(),
+            'persen': () => percentageComponent.generatePercentageQuestion(),
+            'pecahan': () => fractionComponent.generateFractionQuestion()
+        };
 
-        // Operasi Penjumlahan - Menggunakan komponen Addition
-        if (currentOp === 'penjumlahan') {
-            question = additionComponent.generateAdditionQuestion();
+        if (operationMap[operation]) {
+            question = operationMap[operation]();
             return;
         }
-
-        // Operasi Pengurangan - Menggunakan komponen Substraction
-        if (currentOp === 'pengurangan') {
-            question = substractionComponent.generateSubtractionQuestion();
-            return;
-        }
-
-        // Operasi Perkalian - Menggunakan komponen Multiplication
-        if (currentOp === 'perkalian') {
-            question = multiplicationComponent.generateMultiplicationQuestion();
-            return;
-        }
-
-        // Operasi Pembagian - Menggunakan komponen Division
-        if (currentOp === 'pembagian') {
-            question = divisionComponent.generateDivisionQuestion();
-            return;
-        }
-
-        // Operasi Campuran - Menggunakan komponen MixedOperation
-        if (currentOp === 'campuran') {
-            question = mixedOperationComponent.generateMixedQuestion();
-            return;
-        }
-
-        // Operasi Desimal - Menggunakan komponen Decimal
-        if (currentOp === 'desimal') {
-            question = decimalComponent.generateDecimalQuestion();
-            return;
-        }
-
-        // Operasi Persen - Menggunakan komponen Percentage
-        if (currentOp === 'persen') {
-            question = percentageComponent.generatePercentageQuestion();
-            return;
-        }
-
-        // Operasi Pecahan - Menggunakan komponen Fraction
-        if (currentOp === 'pecahan') {
-            question = fractionComponent.generateFractionQuestion();
-            return;
-        }
-
-        // Fallback untuk penjumlahan jika tidak ada operasi yang cocok
-        let maxNum;
-        switch (level) {
-            case 'tk': maxNum = 10; break;
-            case '1': maxNum = 20; break;
-            case '2': maxNum = 50; break;
-            case '3': maxNum = 100; break;
-            case '4': maxNum = 200; break;
-        }
-
-        let a = Math.floor(Math.random() * maxNum) + 1;
-        let b = Math.floor(Math.random() * maxNum) + 1;
-        let answer = a + b;
-        question = { text: `${a} + ${b} = ?`, answer: answer };
     }
 
     function submitAnswer() {
