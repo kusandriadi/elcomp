@@ -62,9 +62,16 @@
 
 {:else if currentPage === 'reading'}
   <div class="min-h-screen bg-sky-100">
-    <div class="p-4">
-      <button on:click={() => navigateTo('home')} class="text-blue-600 hover:text-blue-800 font-semibold">
-        ← Kembali ke Menu Utama
+    <!-- Floating Home Button - Bottom Right (Thumb Zone) -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <button
+              on:click={() => navigateTo('home')}
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+              title="Kembali ke Menu Utama"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
       </button>
     </div>
     <ElRead />
@@ -72,9 +79,16 @@
 
 {:else if currentPage === 'math'}
   <div class="min-h-screen bg-sky-100">
-    <div class="p-4">
-      <button on:click={() => navigateTo('home')} class="text-blue-600 hover:text-blue-800 font-semibold">
-        ← Kembali ke Menu Utama
+    <!-- Floating Home Button - Bottom Right (Thumb Zone) -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <button
+              on:click={() => navigateTo('home')}
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+              title="Kembali ke Menu Utama"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
       </button>
     </div>
     <ElMath />
@@ -82,10 +96,21 @@
 
 {:else if currentPage === 'logic'}
   <div class="flex items-center justify-center min-h-screen bg-sky-100 p-4 font-poppins">
+    <!-- Floating Home Button - Bottom Right (Thumb Zone) -->
+    <div class="fixed bottom-6 right-6 z-50">
+      <button
+              on:click={() => navigateTo('home')}
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded-full shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
+              title="Kembali ke Menu Utama"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+      </button>
+    </div>
     <div class="card text-center">
       <h2 class="text-2xl font-bold text-gray-800 mb-4">Latihan Logika</h2>
       <p class="text-gray-600 mb-6">Fitur ini sedang dikembangkan...</p>
-      <button on:click={() => navigateTo('home')} class="text-blue-600 hover:text-blue-800 font-semibold">← Kembali ke Menu Utama</button>
     </div>
   </div>
 {/if}
