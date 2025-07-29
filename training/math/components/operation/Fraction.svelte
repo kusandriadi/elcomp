@@ -2,45 +2,51 @@
     export let level;
 
     export function generateFractionQuestion() {
-        const scenarios = ['add', 'subtract', 'multiply', 'convert', 'decimal'];
+        const scenarios = ['simple_decimal', 'easy_add', 'basic_convert'];
         const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
 
-        let a, b, answer, text;
+        let answer, text;
 
         switch (scenario) {
-            case 'add':
-                const denom = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
-                a = Math.floor(Math.random() * (denom - 1)) + 1;
-                b = Math.floor(Math.random() * (denom - a)) + 1;
-                answer = Math.round(((a + b) / denom) * 1000) / 1000; // Convert to decimal
-                text = `${a}/${denom} + ${b}/${denom}`;
+            case 'simple_decimal':
+                // Pecahan sederhana ke desimal
+                const simpleFractions = [
+                    { num: 1, den: 2, result: 0.5 },
+                    { num: 1, den: 4, result: 0.25 },
+                    { num: 3, den: 4, result: 0.75 },
+                    { num: 1, den: 5, result: 0.2 },
+                    { num: 2, den: 5, result: 0.4 },
+                    { num: 3, den: 5, result: 0.6 },
+                    { num: 4, den: 5, result: 0.8 },
+                    { num: 1, den: 10, result: 0.1 },
+                    { num: 3, den: 10, result: 0.3 }
+                ];
+                const fraction = simpleFractions[Math.floor(Math.random() * simpleFractions.length)];
+                answer = fraction.result;
+                text = `${fraction.num}/${fraction.den}`;
                 return { text: `${text} = ? (dalam desimal)`, answer: answer };
-            case 'subtract':
-                const denom2 = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
-                a = Math.floor(Math.random() * (denom2 - 2)) + 3;
-                b = Math.floor(Math.random() * (a - 1)) + 1;
-                answer = Math.round(((a - b) / denom2) * 1000) / 1000; // Convert to decimal
-                text = `${a}/${denom2} - ${b}/${denom2}`;
+
+            case 'easy_add':
+                // Penjumlahan pecahan dengan penyebut sama
+                const denominator = [2, 4, 5, 10][Math.floor(Math.random() * 4)];
+                const num1 = Math.floor(Math.random() * (denominator - 1)) + 1;
+                const num2 = Math.floor(Math.random() * (denominator - num1)) + 1;
+                answer = Math.round(((num1 + num2) / denominator) * 100) / 100;
+                text = `${num1}/${denominator} + ${num2}/${denominator}`;
                 return { text: `${text} = ? (dalam desimal)`, answer: answer };
-            case 'multiply':
-                a = Math.floor(Math.random() * 5) + 1;
-                const denom3 = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
-                b = Math.floor(Math.random() * 4) + 1;
-                answer = Math.round((a * b / denom3) * 1000) / 1000; // Convert to decimal
-                text = `${a} × ${b}/${denom3}`;
-                return { text: `${text} = ? (dalam desimal)`, answer: answer };
-            case 'convert':
-                const whole = Math.floor(Math.random() * 5) + 1;
-                const denom4 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
-                const numerator = Math.floor(Math.random() * denom4) + 1;
-                answer = Math.round((whole + numerator / denom4) * 1000) / 1000; // Convert to decimal
-                text = `${whole} ${numerator}/${denom4}`;
-                return { text: `${text} = ? (dalam desimal)`, answer: answer };
-            case 'decimal':
-                const denom5 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
-                const num5 = Math.floor(Math.random() * denom5) + 1;
-                answer = Math.round((num5 / denom5) * 1000) / 1000;
-                text = `${num5}/${denom5}`;
+
+            case 'basic_convert':
+                // Pecahan campuran sederhana
+                const whole = [1, 2][Math.floor(Math.random() * 2)];
+                const easyFractions = [
+                    { num: 1, den: 2, val: 0.5 },
+                    { num: 1, den: 4, val: 0.25 },
+                    { num: 3, den: 4, val: 0.75 },
+                    { num: 1, den: 5, val: 0.2 }
+                ];
+                const frac = easyFractions[Math.floor(Math.random() * easyFractions.length)];
+                answer = whole + frac.val;
+                text = `${whole} ${frac.num}/${frac.den}`;
                 return { text: `${text} = ? (dalam desimal)`, answer: answer };
         }
     }

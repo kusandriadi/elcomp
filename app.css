@@ -1,3 +1,4 @@
+
 /* app.css */
 
 @tailwind base;
@@ -101,7 +102,7 @@ body {
 }
 
 .question-display {
-  @apply text-4xl md:text-6xl font-bold text-gray-800 mb-6;
+  @apply text-4xl md:text-5xl font-bold text-gray-800 mb-6;
 }
 
 .feedback-message {
