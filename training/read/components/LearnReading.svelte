@@ -13,7 +13,6 @@
     let wordIndices = {};
     let currentWord = '';
 
-    // Fungsi untuk mengocok array (Fisher-Yates shuffle)
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -22,7 +21,6 @@
         return array;
     }
 
-    // Menginisialisasi semua daftar kata yang sudah diacak
     onMount(() => {
         for (const level in readingWords) {
             shuffledWords[level] = shuffle([...readingWords[level]]);
@@ -39,12 +37,10 @@
         window.speechSynthesis.speak(utterance);
     }
 
-    // PERUBAHAN: Logika sekarang mengambil kata dari daftar yang sudah diacak
     function nextWord() {
         let currentIndex = wordIndices[readingLevel];
         currentIndex++;
 
-        // Jika sudah sampai akhir, kocok lagi dan mulai dari awal
         if (currentIndex >= shuffledWords[readingLevel].length) {
             currentIndex = 0;
             shuffledWords[readingLevel] = shuffle([...readingWords[readingLevel]]);
@@ -67,8 +63,8 @@
         <option value="level3">Level 3: Kalimat</option>
     </select>
 
-    <div class="relative bg-green-200 p-8 rounded-3xl mb-6">
-        <p class="text-5xl font-bold text-green-800">{currentWord}</p>
+    <div class="relative bg-green-200 p-4 rounded-3xl mb-6 flex items-center justify-center" style="min-height: 150px;">
+        <p class="text-5xl font-bold text-green-800 break-words px-4">{currentWord}</p>
         <button on:click={() => playSound(currentWord)} class="absolute bottom-3 right-3 bg-green-500 text-white w-14 h-14 rounded-full hover:bg-green-600 transition shadow-md flex items-center justify-center transform hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>

@@ -34,7 +34,6 @@
         shuffledWords = shuffle([...words]);
         nextTypingWord();
         startQuestionTimer();
-        // Fokus saat komponen pertama kali dimuat
         inputElement?.focus();
     });
 
@@ -86,7 +85,6 @@
                 nextTypingWord();
                 isTypingCorrect = null;
                 startQuestionTimer();
-                // PERUBAHAN 2: Fokus dipanggil secara eksplisit untuk soal berikutnya
                 inputElement?.focus();
             }, 500);
         }
@@ -96,8 +94,8 @@
         typingTimer = 20;
         clearInterval(typingInterval);
         typingInterval = setInterval(() => {
-            timer--;
-            if (timer <= 0) {
+            typingTimer--;
+            if (typingTimer <= 0) {
                 playTone('incorrect');
                 moveToNextQuestion();
             }

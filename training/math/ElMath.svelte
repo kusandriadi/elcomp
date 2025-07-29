@@ -5,6 +5,7 @@
     let screen = 'setup'; // setup, game, score
     let operation = 'penjumlahan';
     let level = 'tk';
+    let useTimer = true; // Pilihan untuk menggunakan timer
 
     let finalScore = 0;
     let totalQuestions = 10;
@@ -63,13 +64,24 @@
                         {/each}
                     </select>
                 </div>
+                <div class="flex items-center gap-3">
+                    <input 
+                        type="checkbox" 
+                        id="timer-checkbox" 
+                        bind:checked={useTimer}
+                        class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                    >
+                    <label for="timer-checkbox" class="text-base font-bold text-gray-700 cursor-pointer">
+                        Gunakan Timer
+                    </label>
+                </div>
             </div>
 
             <button on:click={() => screen = 'game'} class="btn-primary w-full max-w-xs mx-auto text-lg">Mulai Berlatih!</button>
         </div>
 
     {:else if screen === 'game'}
-        <MathGame {level} {operation} on:switch={handleSwitch} />
+        <MathGame {level} {operation} {useTimer} on:switch={handleSwitch} />
 
     {:else if screen === 'score'}
         <TrainingScore score={finalScore} {totalQuestions} on:switch={handleSwitch} />

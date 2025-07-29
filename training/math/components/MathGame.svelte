@@ -2,6 +2,7 @@
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
     export let level;
     export let operation;
+    export let useTimer = true; // Prop baru untuk mengontrol timer
 
     const dispatch = createEventDispatcher();
 
@@ -14,7 +15,6 @@
     let userAnswer = '';
     let isCorrect = null;
     let synth;
-    let useTimer = level !== 'tk' && level !== '1';
 
     // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
     let inputElement;
@@ -72,7 +72,7 @@
             switch (template) {
                 case '(a+b)*c': answer = (a+b)*c; text = `(${a} + ${b}) × ${c}`; break;
                 case 'a*(b+c)': answer = a*(b+c); text = `${a} × (${b} + ${c})`; break;
-                case '(a*b)+c': answer = (a*b)+c; text = `(${a} × ${b}) + ${c}`; break;
+                case '(a*b)+c': answer = (a*b)+c; text = `(${a} × ${b}) + ${c})`; break;
                 case 'a+(b*c)': answer = a+(b*c); text = `${a} + (${b} × ${c})`; break;
                 case '(a-b)*c': if (a <= b) { [a, b] = [b, a]; if (a===b) a++; } answer = (a-b)*c; text = `(${a} − ${b}) × ${c}`; break;
                 case 'a*(b-c)': if (b <= c) { [b, c] = [c, b]; if (b===c) b++; } answer = a*(b-c); text = `${a} × (${b} − ${c})`; break;
