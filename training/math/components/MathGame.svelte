@@ -58,6 +58,124 @@
 
         let currentOp = operation;
 
+        // Operasi Persen
+        if (currentOp === 'persen') {
+            const scenarios = ['basic', 'of', 'increase', 'decrease'];
+            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+
+            switch (scenario) {
+                case 'basic':
+                    a = [10, 20, 25, 50, 75].filter(() => Math.random() > 0.5)[0] || 25;
+                    b = Math.floor(Math.random() * 100) + 1;
+                    answer = Math.round((a / 100) * b * 100) / 100; // Allow decimal answer
+                    text = `${a}% dari ${b}`;
+                    break;
+                case 'of':
+                    a = Math.floor(Math.random() * 99) + 1;
+                    b = Math.floor(Math.random() * 80) + 20;
+                    answer = Math.round((a / 100) * b * 100) / 100; // Allow decimal answer
+                    text = `${a}% dari ${b}`;
+                    break;
+                case 'increase':
+                    a = Math.floor(Math.random() * 50) + 10;
+                    b = Math.floor(Math.random() * 30) + 10;
+                    answer = Math.round(a * (1 + b/100) * 100) / 100; // Allow decimal answer
+                    text = `${a} naik ${b}%`;
+                    break;
+                case 'decrease':
+                    a = Math.floor(Math.random() * 50) + 30;
+                    b = Math.floor(Math.random() * 25) + 10;
+                    answer = Math.round(a * (1 - b/100) * 100) / 100; // Allow decimal answer
+                    text = `${a} turun ${b}%`;
+                    break;
+            }
+            question = { text: `${text} = ?`, answer: answer };
+            return;
+        }
+
+        // Operasi Pecahan
+        if (currentOp === 'pecahan') {
+            const scenarios = ['add', 'subtract', 'multiply', 'convert', 'decimal'];
+            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+
+            switch (scenario) {
+                case 'add':
+                    const denom = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
+                    a = Math.floor(Math.random() * (denom - 1)) + 1;
+                    b = Math.floor(Math.random() * (denom - a)) + 1;
+                    answer = Math.round(((a + b) / denom) * 1000) / 1000; // Convert to decimal
+                    text = `${a}/${denom} + ${b}/${denom}`;
+                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
+                    return;
+                case 'subtract':
+                    const denom2 = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
+                    a = Math.floor(Math.random() * (denom2 - 2)) + 3;
+                    b = Math.floor(Math.random() * (a - 1)) + 1;
+                    answer = Math.round(((a - b) / denom2) * 1000) / 1000; // Convert to decimal
+                    text = `${a}/${denom2} - ${b}/${denom2}`;
+                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
+                    return;
+                case 'multiply':
+                    a = Math.floor(Math.random() * 5) + 1;
+                    const denom3 = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
+                    b = Math.floor(Math.random() * 4) + 1;
+                    answer = Math.round((a * b / denom3) * 1000) / 1000; // Convert to decimal
+                    text = `${a} × ${b}/${denom3}`;
+                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
+                    return;
+                case 'convert':
+                    const whole = Math.floor(Math.random() * 5) + 1;
+                    const denom4 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
+                    const numerator = Math.floor(Math.random() * denom4) + 1;
+                    answer = Math.round((whole + numerator / denom4) * 1000) / 1000; // Convert to decimal
+                    text = `${whole} ${numerator}/${denom4}`;
+                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
+                    return;
+                case 'decimal':
+                    const denom5 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
+                    const num5 = Math.floor(Math.random() * denom5) + 1;
+                    answer = Math.round((num5 / denom5) * 1000) / 1000;
+                    text = `${num5}/${denom5}`;
+                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
+                    return;
+            }
+        }
+
+        // Operasi Desimal
+        if (currentOp === 'desimal') {
+            const scenarios = ['add', 'subtract', 'multiply', 'divide'];
+            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+
+            switch (scenario) {
+                case 'add':
+                    a = Math.round((Math.random() * 50 + 1) * 100) / 100; // Up to 2 decimal places
+                    b = Math.round((Math.random() * 50 + 1) * 100) / 100;
+                    answer = Math.round((a + b) * 100) / 100;
+                    text = `${a} + ${b}`;
+                    break;
+                case 'subtract':
+                    a = Math.round((Math.random() * 80 + 20) * 100) / 100;
+                    b = Math.round((Math.random() * (a - 5)) * 100) / 100;
+                    answer = Math.round((a - b) * 100) / 100;
+                    text = `${a} - ${b}`;
+                    break;
+                case 'multiply':
+                    a = Math.round((Math.random() * 9 + 1) * 100) / 100;
+                    b = Math.round((Math.random() * 9 + 1) * 100) / 100;
+                    answer = Math.round((a * b) * 100) / 100;
+                    text = `${a} × ${b}`;
+                    break;
+                case 'divide':
+                    b = Math.round((Math.random() * 8 + 2) * 100) / 100;
+                    a = Math.round((b * (Math.random() * 8 + 2)) * 100) / 100;
+                    answer = Math.round((a / b) * 100) / 100;
+                    text = `${a} ÷ ${b}`;
+                    break;
+            }
+            question = { text: `${text} = ?`, answer: answer };
+            return;
+        }
+
         if (currentOp === 'campuran') {
             const templates = ['(a+b)*c', 'a*(b+c)', '(a*b)+c', 'a+(b*c)', '(a-b)*c', 'a*(b-c)', 'c*(a-b)', '(a*b)-c', 'a-(b*c)'];
             if (level === '4') {
@@ -98,7 +216,23 @@
 
     function submitAnswer() {
         if (userAnswer === '') return;
-        if (parseInt(userAnswer) === question.answer) {
+
+        let userNum;
+        let isAnswerCorrect = false;
+
+        // Handle different input types based on operation
+        if (operation === 'desimal' || operation === 'pecahan' || operation === 'persen') {
+            // Allow decimal input for these operations
+            userNum = parseFloat(userAnswer);
+            // Use tolerance for decimal comparison
+            isAnswerCorrect = Math.abs(userNum - question.answer) < 0.01;
+        } else {
+            // Integer operations
+            userNum = parseInt(userAnswer);
+            isAnswerCorrect = userNum === question.answer;
+        }
+
+        if (isAnswerCorrect) {
             isCorrect = true;
             playTone('correct');
             score++;
@@ -162,12 +296,16 @@
     <p class="question-display mb-4">{question.text}</p>
 
     <form on:submit|preventDefault={submitAnswer} class="flex items-center gap-2">
-        <input type="number" bind:this={inputElement} bind:value={userAnswer}
-               class="input-field flex-grow"
-               class:input-correct={isCorrect === true}
-               class:input-incorrect={isCorrect === false}
-               placeholder="Jawabanmu"
-               autocomplete="off">
+        <input
+                type="number"
+                step={['desimal', 'pecahan', 'persen'].includes(operation) ? '0.01' : '1'}
+                bind:this={inputElement}
+                bind:value={userAnswer}
+                class="input-field flex-grow"
+                class:input-correct={isCorrect === true}
+                class:input-incorrect={isCorrect === false}
+                placeholder="Jawabanmu"
+                autocomplete="off">
         <button type="submit" class="bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-xl flex items-center justify-center transition shadow-md transform hover:scale-110">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
         </button>

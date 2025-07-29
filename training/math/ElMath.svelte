@@ -27,7 +27,10 @@
         { value: 'pengurangan', label: 'Pengurangan (-)' },
         { value: 'perkalian', label: 'Perkalian (x)' },
         { value: 'pembagian', label: 'Pembagian (÷)' },
-        { value: 'campuran', label: 'Campuran' }
+        { value: 'campuran', label: 'Campuran (+,-,x,÷)' },
+        { value: 'persen', label: 'Persen (%)' },
+        { value: 'pecahan', label: 'Pecahan' },
+        { value: 'desimal', label: 'Desimal' }
     ];
     let availableOperations = [];
 
@@ -35,7 +38,8 @@
         if (level === 'tk') availableOperations = allOperations.slice(0, 2);
         else if (level === '1') availableOperations = allOperations.slice(0, 3);
         else if (level === '2') availableOperations = allOperations.slice(0, 4);
-        else availableOperations = allOperations.slice(0, 5);
+        else if (level === '3') availableOperations = allOperations.slice(0, 5);
+        else if (level === '4') availableOperations = allOperations; // Kelas 4 mendapat semua operasi
         if (!availableOperations.find(op => op.value === operation)) {
             operation = availableOperations[0].value;
         }
@@ -70,10 +74,10 @@
                 </div>
                 <div class="flex items-center gap-3">
                     <input
-                        type="checkbox"
-                        id="timer-checkbox"
-                        bind:checked={useTimer}
-                        class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            type="checkbox"
+                            id="timer-checkbox"
+                            bind:checked={useTimer}
+                            class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     >
                     <label for="timer-checkbox" class="text-base font-bold text-gray-700 cursor-pointer">
                         Gunakan Timer
