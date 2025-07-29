@@ -1,5 +1,7 @@
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+    import Addition from './operation/Addition.svelte';
+
     export let level;
     export let operation;
     export let useTimer = true; // Prop baru untuk mengontrol timer
@@ -18,6 +20,9 @@
 
     // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
     let inputElement;
+
+    // Referensi ke komponen Addition
+    let additionComponent;
 
     onMount(() => {
         if (window.Tone) {
@@ -57,6 +62,12 @@
         }
 
         let currentOp = operation;
+
+        // Operasi Penjumlahan - Menggunakan komponen Addition
+        if (currentOp === 'penjumlahan') {
+            question = additionComponent.generateAdditionQuestion();
+            return;
+        }
 
         // Operasi Persen
         if (currentOp === 'persen') {
@@ -209,7 +220,13 @@
             case 'pengurangan': a = Math.floor(Math.random() * maxNum) + 1; b = Math.floor(Math.random() * a); answer = a - b; symbol = '−'; break;
             case 'perkalian': a = Math.floor(Math.random() * maxMult) + 1; b = Math.floor(Math.random() * maxMult) + (level === 'tk' ? 0 : 1); answer = a * b; symbol = '×'; break;
             case 'pembagian': b = Math.floor(Math.random() * (maxDiv - 1)) + 2; let temp = Math.floor(Math.random() * maxDiv) + 1; a = b * temp; answer = temp; symbol = '÷'; break;
-            default: a = Math.floor(Math.random() * maxNum) + 1; b = Math.floor(Math.random() * maxNum) + 1; answer = a + b; symbol = '+'; break;
+            default:
+                // Fallback untuk penjumlahan jika komponen Addition tidak tersedia
+                a = Math.floor(Math.random() * maxNum) + 1;
+                b = Math.floor(Math.random() * maxNum) + 1;
+                answer = a + b;
+                symbol = '+';
+                break;
         }
         question = { text: `${a} ${symbol} ${b} = ?`, answer: answer };
     }
@@ -278,6 +295,9 @@
         dispatch('switch', { screen: 'setup' });
     }
 </script>
+
+<!-- Komponen Addition (tersembunyi, hanya untuk logic) -->
+<Addition bind:this={additionComponent} {level} />
 
 <div class="card text-center">
     <div class="flex justify-between items-center mb-4">
