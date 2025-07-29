@@ -4,10 +4,16 @@
     import TypingGame from './components/TypingGame.svelte';
     import TrainingScore from '../TrainingScore.svelte';
 
-    let screen = 'setup'; // setup, learn-letters, learn-reading, typing-game, training-score
+    let screen = 'setup';
     let finalScore = 0;
+    const totalQuestions = 10; // Definisikan total soal di sini
 
     function handleSwitch(event) {
+        // PERUBAHAN: Logika untuk 'Main Lagi'
+        if (event.detail.screen === 'game') {
+            screen = 'typing-game';
+            return;
+        }
         screen = event.detail.screen;
         if (event.detail.score !== undefined) {
             finalScore = event.detail.score;
@@ -47,6 +53,6 @@
     {/if}
 
     {#if screen === 'training-score'}
-        <TrainingScore score={finalScore} on:switch={handleSwitch} />
+        <TrainingScore score={finalScore} {totalQuestions} on:switch={handleSwitch} />
     {/if}
 </div>

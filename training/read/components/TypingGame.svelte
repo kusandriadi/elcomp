@@ -15,6 +15,7 @@
     let words = ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"];
     let shuffledWords = [];
     let wordIndex = 0;
+    let isGameOver = false;
 
     // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
     let inputElement;
@@ -75,9 +76,13 @@
     }
 
     function moveToNextQuestion() {
+        if (isGameOver) return;
+
         clearInterval(typingInterval);
         if (questionNumber >= totalQuestions) {
-            setTimeout(() => dispatch('switch', { screen: 'typing-score', score: typingScore }), 500);
+            isGameOver = true;
+            // PERUBAHAN: Tambahkan `totalQuestions` saat mengirim event
+            setTimeout(() => dispatch('switch', { screen: 'training-score', score: typingScore, totalQuestions: totalQuestions }), 500);
         } else {
             setTimeout(() => {
                 questionNumber++;

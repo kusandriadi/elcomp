@@ -11,10 +11,14 @@
     let totalQuestions = 10;
 
     function handleSwitch(event) {
+        // PERUBAHAN: Logika untuk 'Main Lagi'
+        if (event.detail.screen === 'game') {
+            screen = 'game'; // Cukup set ke 'game' karena sudah di dalam Math
+            return;
+        }
         screen = event.detail.screen;
         if (event.detail.score !== undefined) {
             finalScore = event.detail.score;
-            totalQuestions = event.detail.totalQuestions;
         }
     }
 
@@ -65,9 +69,9 @@
                     </select>
                 </div>
                 <div class="flex items-center gap-3">
-                    <input 
-                        type="checkbox" 
-                        id="timer-checkbox" 
+                    <input
+                        type="checkbox"
+                        id="timer-checkbox"
                         bind:checked={useTimer}
                         class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                     >

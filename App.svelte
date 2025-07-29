@@ -19,7 +19,7 @@
 </script>
 
 <svelte:head>
-  <title>Arena Cerdas - Belajar Membaca, Matematika, dan Logika</title>
+  <title>ElCompia - Elementary Computational Thinking Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -28,8 +28,8 @@
 {#if currentPage === 'home'}
   <div class="flex items-center justify-center min-h-screen bg-sky-100 p-4 font-poppins">
     <main class="w-full max-w-sm sm:max-w-xl bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center">
-      <h1 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Selamat Datang di Arena Cerdas!</h1>
-      <p class="text-base sm:text-lg text-gray-700 mb-8 sm:mb-10">Tempat seru untuk belajar membaca, matematika, dan berpikir logis.</p>
+      <h1 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Welcome to ElCompia!</h1>
+      <p class="text-base sm:text-lg text-gray-700 mb-8 sm:mb-10">Elementary Computational Thinking Platform.</p>
 
       <div class="space-y-4 sm:space-y-6">
         <button on:click={() => startAndNavigate('reading')} class="btn-link bg-blue-500 hover:bg-blue-600 w-full">
@@ -37,7 +37,7 @@
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <span class="text-base sm:text-xl">Belajar Membaca & Menulis</span>
+          <span class="text-base sm:text-xl">Membaca & Menulis</span>
         </button>
 
         <button on:click={() => startAndNavigate('math')} class="btn-link bg-green-600 hover:bg-green-700 w-full">
