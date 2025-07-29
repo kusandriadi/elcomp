@@ -1,5 +1,8 @@
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+    import QuestionTimer from '../../QuestionTimer.svelte';
+    import NextQuestion from '../../NextQuestion.svelte';
+
     const dispatch = createEventDispatcher();
 
     let typingWord = '';
@@ -9,16 +12,16 @@
     let synth;
     let questionNumber = 1;
     const totalQuestions = 10;
-    let typingTimer = 20;
-    let typingInterval;
+    let isGameOver = false;
+
+    // References to components
+    let questionTimer;
+    let nextQuestionComponent;
+    let inputElement;
 
     let words = ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"];
     let shuffledWords = [];
     let wordIndex = 0;
-    let isGameOver = false;
-
-    // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
-    let inputElement;
 
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -34,15 +37,23 @@
         }
         shuffledWords = shuffle([...words]);
         nextTypingWord();
-        startQuestionTimer();
+        questionTimer?.startQuestionTimer();
         inputElement?.focus();
+
+        // Register callbacks with NextQuestion component
+        nextQuestionComponent?.registerCallbacks({
+            resetAnswer: () => {
+                userInput = '';
+                isTypingCorrect = null;
+            },
+            nextWord: nextTypingWord
+        });
     });
 
     onDestroy(() => {
         if (synth) {
             synth.dispose();
         }
-        clearInterval(typingInterval);
     });
 
     function playTone(note) {
@@ -72,39 +83,16 @@
             isTypingCorrect = false;
             playTone('incorrect');
         }
-        moveToNextQuestion();
+        nextQuestionComponent?.moveToNextQuestion();
     }
 
-    function moveToNextQuestion() {
-        if (isGameOver) return;
-
-        clearInterval(typingInterval);
-        if (questionNumber >= totalQuestions) {
-            isGameOver = true;
-            // PERUBAHAN: Tambahkan `totalQuestions` saat mengirim event
-            setTimeout(() => dispatch('switch', { screen: 'training-score', score: typingScore, totalQuestions: totalQuestions }), 500);
-        } else {
-            setTimeout(() => {
-                questionNumber++;
-                userInput = '';
-                nextTypingWord();
-                isTypingCorrect = null;
-                startQuestionTimer();
-                inputElement?.focus();
-            }, 500);
-        }
+    function handleTimerTimeout() {
+        playTone('incorrect');
+        nextQuestionComponent?.moveToNextQuestion();
     }
 
-    function startQuestionTimer() {
-        typingTimer = 20;
-        clearInterval(typingInterval);
-        typingInterval = setInterval(() => {
-            typingTimer--;
-            if (typingTimer <= 0) {
-                playTone('incorrect');
-                moveToNextQuestion();
-            }
-        }, 1000);
+    function handleNextQuestion(event) {
+        questionNumber = event.detail.questionNumber;
     }
 
     function goBack() {
@@ -112,17 +100,30 @@
     }
 </script>
 
+<!-- NextQuestion component - handles question navigation logic -->
+<NextQuestion
+        bind:this={nextQuestionComponent}
+        bind:questionNumber
+        {totalQuestions}
+        score={typingScore}
+        {questionTimer}
+        useTimer={true}
+        {inputElement}
+        gameType="typing"
+        {isGameOver}
+        on:switch={(e) => dispatch('switch', e.detail)}
+        on:nextQuestion={handleNextQuestion} />
+
 <div class="card text-center">
     <div class="flex justify-between items-center mb-4">
         <div class="text-lg">Soal: <span class="font-bold">{questionNumber} / {totalQuestions}</span></div>
         <div class="text-lg">Skor: <span class="font-bold text-green-600">{typingScore * 10}</span></div>
     </div>
 
-    <div class="timer-container mb-6">
-        {#each {length: 20} as _, i}
-            <div class="timer-dot" class:active={i < typingTimer} class:inactive={i >= typingTimer}></div>
-        {/each}
-    </div>
+    <QuestionTimer
+            bind:this={questionTimer}
+            duration={20}
+            on:timeout={handleTimerTimeout} />
 
     <p class="question-display mb-4">{typingWord}</p>
 

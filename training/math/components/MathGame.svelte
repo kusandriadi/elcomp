@@ -1,28 +1,44 @@
+
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
     import Addition from './operation/Addition.svelte';
+    import Substraction from './operation/Substraction.svelte';
+    import Multiplication from './operation/Multiplication.svelte';
+    import Division from './operation/Division.svelte';
+    import MixedOperation from './operation/MixedOperation.svelte';
+    import Decimal from './operation/Decimal.svelte';
+    import Percentage from './operation/Percentage.svelte';
+    import Fraction from './operation/Fraction.svelte';
+    import QuestionTimer from '../../QuestionTimer.svelte';
+    import NextQuestion from '../../NextQuestion.svelte';
 
     export let level;
     export let operation;
-    export let useTimer = true; // Prop baru untuk mengontrol timer
+    export let useTimer = true;
 
     const dispatch = createEventDispatcher();
 
     let score = 0;
     let questionNumber = 1;
     const totalQuestions = 10;
-    let timer = 20;
-    let countdown;
     let question = { text: '', answer: 0 };
     let userAnswer = '';
     let isCorrect = null;
     let synth;
 
-    // PERUBAHAN 1: Deklarasikan variabel untuk elemen input
+    // References to components
     let inputElement;
+    let questionTimer;
+    let nextQuestionComponent;
 
-    // Referensi ke komponen Addition
     let additionComponent;
+    let substractionComponent;
+    let multiplicationComponent;
+    let divisionComponent;
+    let mixedOperationComponent;
+    let decimalComponent;
+    let percentageComponent;
+    let fractionComponent;
 
     onMount(() => {
         if (window.Tone) {
@@ -30,15 +46,22 @@
         }
         generateQuestion();
         if (useTimer) {
-            startQuestionTimer();
+            questionTimer?.startQuestionTimer();
         }
-        // Fokus saat komponen pertama kali dimuat
         inputElement?.focus();
+
+        // Register callbacks with NextQuestion component
+        nextQuestionComponent?.registerCallbacks({
+            resetAnswer: () => {
+                userAnswer = '';
+                isCorrect = null;
+            },
+            generateQuestion: generateQuestion
+        });
     });
 
     onDestroy(() => {
         if (synth) synth.dispose();
-        clearInterval(countdown);
     });
 
     function playTone(note) {
@@ -49,18 +72,12 @@
         }
     }
 
+    function handleTimerTimeout() {
+        playTone('incorrect');
+        nextQuestionComponent?.moveToNextQuestion();
+    }
+
     function generateQuestion() {
-        let a, b, c, answer, text;
-
-        let maxNum, maxMult, maxDiv;
-        switch (level) {
-            case 'tk': maxNum = 10; maxMult = 3; maxDiv = 3; break;
-            case '1': maxNum = 20; maxMult = 5; maxDiv = 5; break;
-            case '2': maxNum = 50; maxMult = 10; maxDiv = 10; break;
-            case '3': maxNum = 100; maxMult = 12; maxDiv = 12; break;
-            case '4': maxNum = 200; maxMult = 15; maxDiv = 15; break;
-        }
-
         let currentOp = operation;
 
         // Operasi Penjumlahan - Menggunakan komponen Addition
@@ -69,166 +86,62 @@
             return;
         }
 
-        // Operasi Persen
-        if (currentOp === 'persen') {
-            const scenarios = ['basic', 'of', 'increase', 'decrease'];
-            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-
-            switch (scenario) {
-                case 'basic':
-                    a = [10, 20, 25, 50, 75].filter(() => Math.random() > 0.5)[0] || 25;
-                    b = Math.floor(Math.random() * 100) + 1;
-                    answer = Math.round((a / 100) * b * 100) / 100; // Allow decimal answer
-                    text = `${a}% dari ${b}`;
-                    break;
-                case 'of':
-                    a = Math.floor(Math.random() * 99) + 1;
-                    b = Math.floor(Math.random() * 80) + 20;
-                    answer = Math.round((a / 100) * b * 100) / 100; // Allow decimal answer
-                    text = `${a}% dari ${b}`;
-                    break;
-                case 'increase':
-                    a = Math.floor(Math.random() * 50) + 10;
-                    b = Math.floor(Math.random() * 30) + 10;
-                    answer = Math.round(a * (1 + b/100) * 100) / 100; // Allow decimal answer
-                    text = `${a} naik ${b}%`;
-                    break;
-                case 'decrease':
-                    a = Math.floor(Math.random() * 50) + 30;
-                    b = Math.floor(Math.random() * 25) + 10;
-                    answer = Math.round(a * (1 - b/100) * 100) / 100; // Allow decimal answer
-                    text = `${a} turun ${b}%`;
-                    break;
-            }
-            question = { text: `${text} = ?`, answer: answer };
+        // Operasi Pengurangan - Menggunakan komponen Substraction
+        if (currentOp === 'pengurangan') {
+            question = substractionComponent.generateSubtractionQuestion();
             return;
         }
 
-        // Operasi Pecahan
-        if (currentOp === 'pecahan') {
-            const scenarios = ['add', 'subtract', 'multiply', 'convert', 'decimal'];
-            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-
-            switch (scenario) {
-                case 'add':
-                    const denom = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
-                    a = Math.floor(Math.random() * (denom - 1)) + 1;
-                    b = Math.floor(Math.random() * (denom - a)) + 1;
-                    answer = Math.round(((a + b) / denom) * 1000) / 1000; // Convert to decimal
-                    text = `${a}/${denom} + ${b}/${denom}`;
-                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
-                    return;
-                case 'subtract':
-                    const denom2 = [2, 3, 4, 5, 6, 8, 10][Math.floor(Math.random() * 7)];
-                    a = Math.floor(Math.random() * (denom2 - 2)) + 3;
-                    b = Math.floor(Math.random() * (a - 1)) + 1;
-                    answer = Math.round(((a - b) / denom2) * 1000) / 1000; // Convert to decimal
-                    text = `${a}/${denom2} - ${b}/${denom2}`;
-                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
-                    return;
-                case 'multiply':
-                    a = Math.floor(Math.random() * 5) + 1;
-                    const denom3 = [2, 3, 4, 5][Math.floor(Math.random() * 4)];
-                    b = Math.floor(Math.random() * 4) + 1;
-                    answer = Math.round((a * b / denom3) * 1000) / 1000; // Convert to decimal
-                    text = `${a} × ${b}/${denom3}`;
-                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
-                    return;
-                case 'convert':
-                    const whole = Math.floor(Math.random() * 5) + 1;
-                    const denom4 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
-                    const numerator = Math.floor(Math.random() * denom4) + 1;
-                    answer = Math.round((whole + numerator / denom4) * 1000) / 1000; // Convert to decimal
-                    text = `${whole} ${numerator}/${denom4}`;
-                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
-                    return;
-                case 'decimal':
-                    const denom5 = [2, 4, 5, 8, 10][Math.floor(Math.random() * 5)];
-                    const num5 = Math.floor(Math.random() * denom5) + 1;
-                    answer = Math.round((num5 / denom5) * 1000) / 1000;
-                    text = `${num5}/${denom5}`;
-                    question = { text: `${text} = ? (dalam desimal)`, answer: answer };
-                    return;
-            }
-        }
-
-        // Operasi Desimal
-        if (currentOp === 'desimal') {
-            const scenarios = ['add', 'subtract', 'multiply', 'divide'];
-            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-
-            switch (scenario) {
-                case 'add':
-                    a = Math.round((Math.random() * 50 + 1) * 100) / 100; // Up to 2 decimal places
-                    b = Math.round((Math.random() * 50 + 1) * 100) / 100;
-                    answer = Math.round((a + b) * 100) / 100;
-                    text = `${a} + ${b}`;
-                    break;
-                case 'subtract':
-                    a = Math.round((Math.random() * 80 + 20) * 100) / 100;
-                    b = Math.round((Math.random() * (a - 5)) * 100) / 100;
-                    answer = Math.round((a - b) * 100) / 100;
-                    text = `${a} - ${b}`;
-                    break;
-                case 'multiply':
-                    a = Math.round((Math.random() * 9 + 1) * 100) / 100;
-                    b = Math.round((Math.random() * 9 + 1) * 100) / 100;
-                    answer = Math.round((a * b) * 100) / 100;
-                    text = `${a} × ${b}`;
-                    break;
-                case 'divide':
-                    b = Math.round((Math.random() * 8 + 2) * 100) / 100;
-                    a = Math.round((b * (Math.random() * 8 + 2)) * 100) / 100;
-                    answer = Math.round((a / b) * 100) / 100;
-                    text = `${a} ÷ ${b}`;
-                    break;
-            }
-            question = { text: `${text} = ?`, answer: answer };
+        // Operasi Perkalian - Menggunakan komponen Multiplication
+        if (currentOp === 'perkalian') {
+            question = multiplicationComponent.generateMultiplicationQuestion();
             return;
         }
 
+        // Operasi Pembagian - Menggunakan komponen Division
+        if (currentOp === 'pembagian') {
+            question = divisionComponent.generateDivisionQuestion();
+            return;
+        }
+
+        // Operasi Campuran - Menggunakan komponen MixedOperation
         if (currentOp === 'campuran') {
-            const templates = ['(a+b)*c', 'a*(b+c)', '(a*b)+c', 'a+(b*c)', '(a-b)*c', 'a*(b-c)', 'c*(a-b)', '(a*b)-c', 'a-(b*c)'];
-            if (level === '4') {
-                templates.push('a/(b-c)', '(a+b)/c');
-            }
-            const template = templates[Math.floor(Math.random() * templates.length)];
-
-            a = Math.floor(Math.random() * maxMult) + 1;
-            b = Math.floor(Math.random() * maxMult) + 1;
-            c = Math.floor(Math.random() * maxMult) + (level === '3' ? 1 : 2);
-
-            switch (template) {
-                case '(a+b)*c': answer = (a+b)*c; text = `(${a} + ${b}) × ${c}`; break;
-                case 'a*(b+c)': answer = a*(b+c); text = `${a} × (${b} + ${c})`; break;
-                case '(a*b)+c': answer = (a*b)+c; text = `(${a} × ${b}) + ${c})`; break;
-                case 'a+(b*c)': answer = a+(b*c); text = `${a} + (${b} × ${c})`; break;
-                case '(a-b)*c': if (a <= b) { [a, b] = [b, a]; if (a===b) a++; } answer = (a-b)*c; text = `(${a} − ${b}) × ${c}`; break;
-                case 'a*(b-c)': if (b <= c) { [b, c] = [c, b]; if (b===c) b++; } answer = a*(b-c); text = `${a} × (${b} − ${c})`; break;
-                case 'c*(a-b)': if (a <= b) { [a, b] = [b, a]; if (a===b) a++; } answer = c*(a-b); text = `${c} × (${a} − ${b})`; break;
-                case '(a*b)-c': if ((a*b) <= c) { a = c + 1; b = 1; } answer = (a*b)-c; text = `(${a} × ${b}) − ${c}`; break;
-                case 'a-(b*c)': if (a <= (b*c)) { a = (b*c) + Math.floor(Math.random()*5)+1; } answer = a-(b*c); text = `${a} − (${b} × ${c})`; break;
-                case 'a/(b-c)': if (b <= c) { [b, c] = [c, b]; if (b===c) b++; } let subResult = b-c; a = subResult * (Math.floor(Math.random()*5)+1); answer = a / subResult; text = `${a} ÷ (${b} − ${c})`; break;
-                case '(a+b)/c': let addResult = a+b; c = [2,3,4,5].filter(n => addResult % n === 0)[0] || 2; if (!c || addResult % c !== 0) { a=6; b=4; c=2; } answer = (a+b)/c; text = `(${a} + ${b}) ÷ ${c}`; break;
-            }
-            question = { text: `${text} = ?`, answer: answer };
+            question = mixedOperationComponent.generateMixedQuestion();
             return;
         }
 
-        let symbol;
-        switch (currentOp) {
-            case 'pengurangan': a = Math.floor(Math.random() * maxNum) + 1; b = Math.floor(Math.random() * a); answer = a - b; symbol = '−'; break;
-            case 'perkalian': a = Math.floor(Math.random() * maxMult) + 1; b = Math.floor(Math.random() * maxMult) + (level === 'tk' ? 0 : 1); answer = a * b; symbol = '×'; break;
-            case 'pembagian': b = Math.floor(Math.random() * (maxDiv - 1)) + 2; let temp = Math.floor(Math.random() * maxDiv) + 1; a = b * temp; answer = temp; symbol = '÷'; break;
-            default:
-                // Fallback untuk penjumlahan jika komponen Addition tidak tersedia
-                a = Math.floor(Math.random() * maxNum) + 1;
-                b = Math.floor(Math.random() * maxNum) + 1;
-                answer = a + b;
-                symbol = '+';
-                break;
+        // Operasi Desimal - Menggunakan komponen Decimal
+        if (currentOp === 'desimal') {
+            question = decimalComponent.generateDecimalQuestion();
+            return;
         }
-        question = { text: `${a} ${symbol} ${b} = ?`, answer: answer };
+
+        // Operasi Persen - Menggunakan komponen Percentage
+        if (currentOp === 'persen') {
+            question = percentageComponent.generatePercentageQuestion();
+            return;
+        }
+
+        // Operasi Pecahan - Menggunakan komponen Fraction
+        if (currentOp === 'pecahan') {
+            question = fractionComponent.generateFractionQuestion();
+            return;
+        }
+
+        // Fallback untuk penjumlahan jika tidak ada operasi yang cocok
+        let maxNum;
+        switch (level) {
+            case 'tk': maxNum = 10; break;
+            case '1': maxNum = 20; break;
+            case '2': maxNum = 50; break;
+            case '3': maxNum = 100; break;
+            case '4': maxNum = 200; break;
+        }
+
+        let a = Math.floor(Math.random() * maxNum) + 1;
+        let b = Math.floor(Math.random() * maxNum) + 1;
+        let answer = a + b;
+        question = { text: `${a} + ${b} = ?`, answer: answer };
     }
 
     function submitAnswer() {
@@ -257,38 +170,11 @@
             isCorrect = false;
             playTone('incorrect');
         }
-        moveToNextQuestion();
+        nextQuestionComponent?.moveToNextQuestion();
     }
 
-    function moveToNextQuestion() {
-        clearInterval(countdown);
-        if (questionNumber >= totalQuestions) {
-            setTimeout(() => dispatch('switch', { screen: 'score', score: score, totalQuestions: totalQuestions }), 500);
-        } else {
-            setTimeout(() => {
-                questionNumber++;
-                userAnswer = '';
-                isCorrect = null;
-                generateQuestion();
-                if (useTimer) {
-                    startQuestionTimer();
-                }
-                // PERUBAHAN 2: Fokus dipanggil secara eksplisit di sini
-                inputElement?.focus();
-            }, 500);
-        }
-    }
-
-    function startQuestionTimer() {
-        timer = 20;
-        clearInterval(countdown);
-        countdown = setInterval(() => {
-            timer--;
-            if (timer <= 0) {
-                playTone('incorrect');
-                moveToNextQuestion();
-            }
-        }, 1000);
+    function handleNextQuestion(event) {
+        questionNumber = event.detail.questionNumber;
     }
 
     function goBack() {
@@ -296,8 +182,29 @@
     }
 </script>
 
-<!-- Komponen Addition (tersembunyi, hanya untuk logic) -->
+<!-- Operation components -->
 <Addition bind:this={additionComponent} {level} />
+<Substraction bind:this={substractionComponent} {level} />
+<Multiplication bind:this={multiplicationComponent} {level} />
+<Division bind:this={divisionComponent} {level} />
+<MixedOperation bind:this={mixedOperationComponent} {level} />
+<Decimal bind:this={decimalComponent} {level} />
+<Percentage bind:this={percentageComponent} {level} />
+<Fraction bind:this={fractionComponent} {level} />
+
+<!-- NextQuestion component - handles question navigation logic -->
+<NextQuestion
+        bind:this={nextQuestionComponent}
+        bind:questionNumber
+        {totalQuestions}
+        {score}
+        {questionTimer}
+        {useTimer}
+        {inputElement}
+        gameType="math"
+        isGameOver={false}
+        on:switch={(e) => dispatch('switch', e.detail)}
+        on:nextQuestion={handleNextQuestion} />
 
 <div class="card text-center">
     <div class="flex justify-between items-center mb-4">
@@ -306,11 +213,10 @@
     </div>
 
     {#if useTimer}
-        <div class="timer-container mb-6">
-            {#each {length: 20} as _, i}
-                <div class="timer-dot" class:active={i < timer} class:inactive={i >= timer}></div>
-            {/each}
-        </div>
+        <QuestionTimer
+                bind:this={questionTimer}
+                duration={20}
+                on:timeout={handleTimerTimeout} />
     {/if}
 
     <p class="question-display mb-4">{question.text}</p>
