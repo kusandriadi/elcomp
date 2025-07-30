@@ -1,7 +1,7 @@
 {
-  "name": "arena-cerdas",
+  "name": "ElCompia",
   "version": "1.0.0",
-  "description": "Aplikasi pembelajaran untuk anak - membaca, matematika, dan logika",
+  "description": "Educational application for children focusing on reading, mathematics and Computational Thinking",
   "type": "module",
   "scripts": {
     "dev": "vite",
