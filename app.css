@@ -84,22 +84,22 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Modern Card Styles for Children */
+/* Modern Card Styles - Mobile Optimized */
 .card {
-  @apply p-8 rounded-3xl transition-all duration-500 w-full max-w-sm relative overflow-hidden;
+  @apply p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl transition-all duration-300 w-full max-w-full sm:max-w-sm relative;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.3);
   box-shadow: var(--soft-shadow);
 }
 
 .card:hover {
-  @apply scale-105;
+  transform: translateY(-2px);
   box-shadow: var(--success-shadow);
 }
 
 .card-lg {
-  @apply max-w-2xl;
+  @apply max-w-full sm:max-w-2xl lg:max-w-4xl;
 }
 
 .card-fun {
@@ -119,10 +119,16 @@ body {
 
 @media (min-width: 640px) {
   .card {
-    @apply p-10 max-w-lg;
+    @apply p-8 max-w-lg;
   }
   .card-lg {
-    @apply max-w-3xl;
+    @apply max-w-2xl;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-lg {
+    @apply max-w-4xl;
   }
 }
 
@@ -175,12 +181,13 @@ body {
 }
 
 .input-field {
-  @apply w-full py-4 px-6 text-3xl text-center rounded-2xl transition-all duration-300;
+  @apply w-full py-3 sm:py-4 px-4 sm:px-6 text-xl sm:text-2xl md:text-3xl text-center rounded-xl sm:rounded-2xl transition-all duration-300;
   background: rgba(255, 255, 255, 0.9);
   border: 3px solid rgba(79, 172, 254, 0.3);
   backdrop-filter: blur(10px);
   font-family: 'Fredoka', 'Poppins', sans-serif;
   font-weight: 600;
+  min-height: 3rem;
 }
 
 .input-field:focus {
@@ -210,10 +217,11 @@ body {
 }
 
 .question-display {
-  @apply text-5xl md:text-6xl font-bold mb-8;
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 md:mb-8;
   font-family: 'Fredoka', 'Poppins', sans-serif;
   color: #111827;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 1.2;
 }
 
 .feedback-message {
@@ -254,24 +262,23 @@ body {
   color: #4b5563;
 }
 
-/* Fun Animations */
-@keyframes bounce-in {
-  0% { transform: scale(0) rotate(180deg); opacity: 0; }
-  50% { transform: scale(1.2) rotate(90deg); opacity: 0.8; }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+/* Simple Animations - Mobile Friendly */
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
-.animate-bounce-in {
-  animation: bounce-in 0.6s ease-out;
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.animate-gentle-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
 }
 
 /* Fun Background Pattern */

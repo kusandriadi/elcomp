@@ -114,55 +114,55 @@
         on:switch={(e) => dispatch('switch', e.detail)}
         on:nextQuestion={handleNextQuestion} />
 
-<div class="card card-lg text-center animate-bounce-in">
-    <!-- Fun Header -->
-    <div class="flex justify-between items-center mb-8 bg-gradient-to-r from-pink-50 to-blue-50 p-4 rounded-2xl">
+<div class="card card-lg text-center animate-fade-in">
+    <!-- Header - Mobile Optimized -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 bg-gradient-to-r from-pink-50 to-blue-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl gap-2 sm:gap-0">
         <div class="flex items-center gap-2">
-            <div class="text-2xl">⌨️</div>
-            <div class="text-lg font-bold text-gray-800" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
-                Kata: <span class="text-2xl">{questionNumber}</span> / {totalQuestions}
+            <div class="text-xl sm:text-2xl">⌨️</div>
+            <div class="text-sm sm:text-base md:text-lg font-bold text-gray-800" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
+                Kata: <span class="text-lg sm:text-xl md:text-2xl">{questionNumber}</span> / {totalQuestions}
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <div class="text-2xl">🏆</div>
-            <div class="score-display text-xl">
+            <div class="text-xl sm:text-2xl">🏆</div>
+            <div class="score-display text-base sm:text-lg md:text-xl">
                 {typingScore * 10}
             </div>
         </div>
     </div>
 
-    <div class="mb-8">
+    <div class="mb-4 sm:mb-6">
         <QuestionTimer
                 bind:this={questionTimer}
                 duration={20}
                 on:timeout={handleTimerTimeout} />
     </div>
 
-    <!-- Word Display with Fun Background -->
-    <div class="mb-8 p-8 rounded-3xl" style="background: var(--fun-gradient);">
-        <div class="text-xl mb-4 font-bold" style="font-family: 'Fredoka', 'Poppins', sans-serif; color: #6b7280;">
+    <!-- Word Display - Mobile Responsive -->
+    <div class="mb-4 sm:mb-6 md:mb-8 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl" style="background: var(--fun-gradient);">
+        <div class="text-sm sm:text-base md:text-lg lg:text-xl mb-2 sm:mb-4 font-bold" style="font-family: 'Fredoka', 'Poppins', sans-serif; color: #6b7280;">
             Ketik kata ini: 👇
         </div>
-        <p class="question-display text-6xl font-bold" style="font-family: 'Fredoka', 'Poppins', sans-serif;">{typingWord}</p>
+        <p class="question-display font-bold" style="font-family: 'Fredoka', 'Poppins', sans-serif;">{typingWord}</p>
     </div>
 
-    <!-- Modern Typing Form -->
-    <form on:submit|preventDefault={submitAnswer} class="flex flex-col sm:flex-row items-center gap-4 mb-8">
+    <!-- Typing Form - Mobile Optimized -->
+    <form on:submit|preventDefault={submitAnswer} class="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
         <input type="text" bind:this={inputElement} bind:value={userInput}
-               class="input-field flex-grow text-4xl"
+               class="input-field w-full"
                class:input-correct={isTypingCorrect === true}
                class:input-incorrect={isTypingCorrect === false}
                placeholder="Ketik di sini... ✨"
                autocomplete="off">
-        <button type="submit" class="btn-success flex items-center gap-2 px-8 py-4">
-            <div class="text-xl">⚡</div>
-            <span>Kirim!</span>
+        <button type="submit" class="btn-success flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto mx-auto">
+            <div class="text-lg sm:text-xl">⚡</div>
+            <span class="text-base sm:text-lg">Kirim!</span>
         </button>
     </form>
 
-    <!-- Fun Back Button -->
-    <button on:click={goBack} class="btn-secondary flex items-center gap-2 mx-auto">
-        <div class="text-xl">🔙</div>
-        <span>Kembali</span>
+    <!-- Back Button - Mobile Optimized -->
+    <button on:click={goBack} class="btn-secondary flex items-center justify-center gap-2 mx-auto px-4 sm:px-6 py-2 sm:py-3">
+        <div class="text-lg sm:text-xl">🔙</div>
+        <span class="text-sm sm:text-base">Kembali</span>
     </button>
 </div>

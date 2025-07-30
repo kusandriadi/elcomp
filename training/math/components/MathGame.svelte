@@ -157,25 +157,25 @@
         on:switch={(e) => dispatch('switch', e.detail)}
         on:nextQuestion={handleNextQuestion} />
 
-<div class="card card-lg text-center animate-bounce-in">
-    <!-- Fun Header -->
-    <div class="flex justify-between items-center mb-8 bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-2xl">
+<div class="card card-lg text-center animate-fade-in">
+    <!-- Header - Mobile Optimized -->
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl gap-2 sm:gap-0">
         <div class="flex items-center gap-2">
-            <div class="text-2xl">📝</div>
-            <div class="text-lg font-bold text-gray-800" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
-                Soal: <span class="text-2xl">{questionNumber}</span> / {totalQuestions}
+            <div class="text-xl sm:text-2xl">📝</div>
+            <div class="text-sm sm:text-base md:text-lg font-bold text-gray-800" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
+                Soal: <span class="text-lg sm:text-xl md:text-2xl">{questionNumber}</span> / {totalQuestions}
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <div class="text-2xl">🌟</div>
-            <div class="score-display text-xl">
+            <div class="text-xl sm:text-2xl">🌟</div>
+            <div class="score-display text-base sm:text-lg md:text-xl">
                 {score * (100 / totalQuestions)}%
             </div>
         </div>
     </div>
 
     {#if useTimer}
-        <div class="mb-8">
+        <div class="mb-4 sm:mb-6">
             <QuestionTimer
                     bind:this={questionTimer}
                     duration={20}
@@ -183,32 +183,32 @@
         </div>
     {/if}
 
-    <!-- Question Display with Fun Background -->
-    <div class="mb-8 p-6 rounded-3xl" style="background: var(--fun-gradient);">
+    <!-- Question Display - Mobile Responsive -->
+    <div class="mb-4 sm:mb-6 md:mb-8 p-4 sm:p-6 rounded-2xl sm:rounded-3xl" style="background: var(--fun-gradient);">
         <p class="question-display">{question.text}</p>
     </div>
 
-    <!-- Modern Answer Form -->
-    <form on:submit|preventDefault={submitAnswer} class="flex flex-col sm:flex-row items-center gap-4 mb-8">
+    <!-- Answer Form - Mobile Optimized -->
+    <form on:submit|preventDefault={submitAnswer} class="flex flex-col gap-3 sm:gap-4 mb-6 sm:mb-8">
         <input
                 type="number"
                 step={['desimal', 'pecahan', 'persen'].includes(operation) ? '0.01' : '1'}
                 bind:this={inputElement}
                 bind:value={userAnswer}
-                class="input-field flex-grow"
+                class="input-field w-full"
                 class:input-correct={isCorrect === true}
                 class:input-incorrect={isCorrect === false}
                 placeholder="Masukkan jawabanmu... ✨"
                 autocomplete="off">
-        <button type="submit" class="btn-success flex items-center gap-2 px-8 py-4">
-            <div class="text-xl">✅</div>
-            <span>Cek!</span>
+        <button type="submit" class="btn-success flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto mx-auto">
+            <div class="text-lg sm:text-xl">✅</div>
+            <span class="text-base sm:text-lg">Cek Jawaban!</span>
         </button>
     </form>
 
-    <!-- Fun Back Button -->
-    <button on:click={goBack} class="btn-secondary flex items-center gap-2 mx-auto">
-        <div class="text-xl">🔙</div>
-        <span>Kembali</span>
+    <!-- Back Button - Mobile Optimized -->
+    <button on:click={goBack} class="btn-secondary flex items-center justify-center gap-2 mx-auto px-4 sm:px-6 py-2 sm:py-3">
+        <div class="text-lg sm:text-xl">🔙</div>
+        <span class="text-sm sm:text-base">Kembali</span>
     </button>
 </div>
