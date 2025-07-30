@@ -4,6 +4,7 @@
     import { generateQuestion, checkAnswer, updateScore } from '../../../backend/math/index.js';
     import QuestionTimer from '../../QuestionTimer.svelte';
     import NextQuestion from '../../NextQuestion.svelte';
+    import { GAME_CONSTANTS } from '../../utils/constants.js';
 
     export let level;
     export let operation;
@@ -13,7 +14,7 @@
 
     let score = 0;
     let questionNumber = 1;
-    const totalQuestions = 10;
+    const totalQuestions = GAME_CONSTANTS.TOTAL_QUESTIONS;
     let question = { text: '', answer: 0 };
     let userAnswer = '';
     let isCorrect = null;
@@ -89,16 +90,6 @@
         dispatch('switch', { screen: 'setup' });
     }
 </script>
-
-<!-- Operation components -->
-<Addition bind:this={additionComponent} {level} />
-<Substraction bind:this={substractionComponent} {level} />
-<Multiplication bind:this={multiplicationComponent} {level} />
-<Division bind:this={divisionComponent} {level} />
-<MixedOperation bind:this={mixedOperationComponent} {level} />
-<Decimal bind:this={decimalComponent} {level} />
-<Percentage bind:this={percentageComponent} {level} />
-<Fraction bind:this={fractionComponent} {level} />
 
 <!-- NextQuestion component - handles question navigation logic -->
 <NextQuestion
