@@ -1,14 +1,7 @@
 
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-    import Addition from './operation/Addition.svelte';
-    import Substraction from './operation/Substraction.svelte';
-    import Multiplication from './operation/Multiplication.svelte';
-    import Division from './operation/Division.svelte';
-    import MixedOperation from './operation/MixedOperation.svelte';
-    import Decimal from './operation/Decimal.svelte';
-    import Percentage from './operation/Percentage.svelte';
-    import Fraction from './operation/Fraction.svelte';
+    import { generateQuestion, checkAnswer, updateScore } from '../../../backend/math/index.js';
     import QuestionTimer from '../../QuestionTimer.svelte';
     import NextQuestion from '../../NextQuestion.svelte';
 
@@ -31,20 +24,11 @@
     let questionTimer;
     let nextQuestionComponent;
 
-    let additionComponent;
-    let substractionComponent;
-    let multiplicationComponent;
-    let divisionComponent;
-    let mixedOperationComponent;
-    let decimalComponent;
-    let percentageComponent;
-    let fractionComponent;
-
     onMount(() => {
         if (window.Tone) {
             synth = new window.Tone.Synth().toDestination();
         }
-        generateQuestion();
+        generateNewQuestion();
         if (useTimer) {
             questionTimer?.startQuestionTimer();
         }
@@ -56,7 +40,7 @@
                 userAnswer = '';
                 isCorrect = null;
             },
-            generateQuestion: generateQuestion
+            generateQuestion: generateNewQuestion
         });
     });
 
@@ -77,46 +61,19 @@
         nextQuestionComponent?.moveToNextQuestion();
     }
 
-    function generateQuestion() {
-        const operationMap = {
-            'penjumlahan': () => additionComponent.generateAdditionQuestion(),
-            'pengurangan': () => substractionComponent.generateSubtractionQuestion(),
-            'perkalian': () => multiplicationComponent.generateMultiplicationQuestion(),
-            'pembagian': () => divisionComponent.generateDivisionQuestion(),
-            'campuran': () => mixedOperationComponent.generateMixedQuestion(),
-            'desimal': () => decimalComponent.generateDecimalQuestion(),
-            'persen': () => percentageComponent.generatePercentageQuestion(),
-            'pecahan': () => fractionComponent.generateFractionQuestion()
-        };
-
-        if (operationMap[operation]) {
-            question = operationMap[operation]();
-            return;
-        }
+    function generateNewQuestion() {
+        question = generateQuestion(operation, level);
     }
 
     function submitAnswer() {
         if (userAnswer === '') return;
 
-        let userNum;
-        let isAnswerCorrect = false;
-
-        // Handle different input types based on operation
-        if (operation === 'desimal' || operation === 'pecahan' || operation === 'persen') {
-            // Allow decimal input for these operations
-            userNum = parseFloat(userAnswer);
-            // Use tolerance for decimal comparison
-            isAnswerCorrect = Math.abs(userNum - question.answer) < 0.01;
-        } else {
-            // Integer operations
-            userNum = parseInt(userAnswer);
-            isAnswerCorrect = userNum === question.answer;
-        }
-
+        const isAnswerCorrect = checkAnswer(userAnswer, question.answer, operation);
+        score = updateScore(score, isAnswerCorrect);
+        
         if (isAnswerCorrect) {
             isCorrect = true;
             playTone('correct');
-            score++;
         } else {
             isCorrect = false;
             playTone('incorrect');
@@ -178,7 +135,7 @@
         <div class="mb-4 sm:mb-6">
             <QuestionTimer
                     bind:this={questionTimer}
-                    duration={20}
+                    duration={GAME_CONSTANTS.TIMER_DURATION}
                     on:timeout={handleTimerTimeout} />
         </div>
     {/if}

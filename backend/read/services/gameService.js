@@ -74,6 +74,8 @@ export function initializeTypingGame(words, totalQuestions = 10) {
   };
 }
 
+import { checkAnswer, updateScore } from '../../utils/index.js';
+
 /**
  * Check typing answer and update score
  * @param {string} userInput - User's typed input
@@ -83,7 +85,7 @@ export function initializeTypingGame(words, totalQuestions = 10) {
  */
 export function checkTypingAnswer(userInput, correctAnswer, currentScore) {
   const isCorrect = userInput.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
-  const newScore = isCorrect ? currentScore + 1 : currentScore;
+  const newScore = updateScore(currentScore, isCorrect, 1);
   
   return {
     isCorrect,

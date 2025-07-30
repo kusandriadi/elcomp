@@ -1,7 +1,9 @@
 <script>
     import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+    import { getTypingWords, initializeTypingGame, checkTypingAnswer } from '../../../backend/read/index.js';
     import QuestionTimer from '../../QuestionTimer.svelte';
     import NextQuestion from '../../NextQuestion.svelte';
+    import { GAME_CONSTANTS } from '../../utils/constants.js';
 
     const dispatch = createEventDispatcher();
 
@@ -11,7 +13,7 @@
     let isTypingCorrect = null;
     let synth;
     let questionNumber = 1;
-    const totalQuestions = 10;
+    const totalQuestions = GAME_CONSTANTS.TOTAL_QUESTIONS;
     let isGameOver = false;
 
     // References to components
@@ -23,10 +25,7 @@
     let shuffledWords = [];
     let wordIndex = 0;
 
-    onMount(async () => {
-        // Import backend services
-        const { getTypingWords, initializeTypingGame } = await import('../../../backend/read/index.js');
-        
+    onMount(() => {
         if (window.Tone) {
             synth = new window.Tone.Synth().toDestination();
         }
@@ -74,11 +73,8 @@
         wordIndex++;
     }
 
-    async function submitAnswer() {
+    function submitAnswer() {
         if (!userInput) return;
-        
-        // Import backend service for checking answer
-        const { checkTypingAnswer } = await import('../../../backend/read/index.js');
         
         const result = checkTypingAnswer(userInput, typingWord, typingScore);
         isTypingCorrect = result.isCorrect;

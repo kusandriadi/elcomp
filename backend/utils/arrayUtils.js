@@ -1,4 +1,4 @@
-// Array utility functions
+// Shared array utility functions
 
 /**
  * Fisher-Yates shuffle algorithm
@@ -36,4 +36,24 @@ export function getNextItem(items, shuffledItems, currentIndex) {
     newShuffledItems,
     newIndex
   };
+}
+
+/**
+ * Get random item from array
+ * @param {Array} array - Array to pick from
+ * @returns {*} - Random item from array
+ */
+export function getRandomItem(array) {
+  if (!array || array.length === 0) return null;
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+/**
+ * Remove item from array by value
+ * @param {Array} array - Array to modify
+ * @param {*} item - Item to remove
+ * @returns {Array} - New array without the item
+ */
+export function removeItem(array, item) {
+  return array.filter(i => i !== item);
 }

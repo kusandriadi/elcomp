@@ -3,10 +3,12 @@
     import LearnReading from './components/LearnReading.svelte';
     import TypingGame from './components/TypingGame.svelte';
     import TrainingScore from '../TrainingScore.svelte';
+    import { readingNavigation } from '../utils/navigation.js';
+    import { GAME_CONSTANTS } from '../utils/constants.js';
 
     let screen = 'setup';
     let finalScore = 0;
-    const totalQuestions = 10; // Definisikan total soal di sini
+    const totalQuestions = GAME_CONSTANTS.TOTAL_QUESTIONS;
 
     function handleSwitch(event) {
         // PERUBAHAN: Logika untuk 'Main Lagi'
@@ -27,13 +29,13 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Ayo Belajar Membaca!</h1>
             <p class="text-base text-gray-600 mb-8">Pilih latihan yang kamu suka di bawah ini.</p>
             <div class="space-y-4">
-                <button on:click={() => {window.history.pushState({page: 'read-letter'}, '', '/elcomp/read/letter'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-letter'}}));}} class="btn-primary w-full text-lg">
+                <button on:click={readingNavigation.toLetter} class="btn-primary w-full text-lg">
                     📚 Mengenal Huruf
                 </button>
-                <button on:click={() => {window.history.pushState({page: 'read-word'}, '', '/elcomp/read/word'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-word'}}));}} class="btn-primary w-full text-lg">
+                <button on:click={readingNavigation.toWord} class="btn-primary w-full text-lg">
                     📖 Belajar Membaca
                 </button>
-                <button on:click={() => {window.history.pushState({page: 'read-typing'}, '', '/elcomp/read/typing'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-typing'}}));}} class="btn-primary w-full text-lg">
+                <button on:click={readingNavigation.toTyping} class="btn-primary w-full text-lg">
                     ⌨️ Game Mengetik
                 </button>
             </div>

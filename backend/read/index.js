@@ -5,7 +5,7 @@ export { getLettersData } from './data/letters.js';
 export { getReadingWords, getTypingWords } from './data/words.js';
 
 // Utility exports
-export { shuffle, getNextItem } from './utils/arrayUtils.js';
+export { shuffle, getNextItem } from '../utils/index.js';
 
 // Service exports
 export { playSound, isSpeechSupported } from './services/speechService.js';
