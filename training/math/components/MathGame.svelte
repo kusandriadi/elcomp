@@ -161,15 +161,15 @@
     <!-- Header - Mobile Optimized -->
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl gap-2 sm:gap-0">
         <div class="flex items-center gap-2">
-            <div class="text-xl sm:text-2xl">📝</div>
-            <div class="text-sm sm:text-base md:text-lg font-bold text-gray-800" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
-                Soal: <span class="text-lg sm:text-xl md:text-2xl">{questionNumber}</span> / {totalQuestions}
+            <div class="text-xl sm:text-2xl flex items-center">📝</div>
+            <div class="text-sm sm:text-base md:text-lg font-bold text-gray-800 flex items-center" style="font-family: 'Fredoka', 'Poppins', sans-serif;">
+                Soal: <span class="text-lg sm:text-xl md:text-2xl ml-1">{questionNumber}</span> / {totalQuestions}
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <div class="text-xl sm:text-2xl">🌟</div>
-            <div class="score-display text-base sm:text-lg md:text-xl">
-                {score * (100 / totalQuestions)}%
+            <div class="text-xl sm:text-2xl flex items-center">🌟</div>
+            <div class="score-display text-base sm:text-lg md:text-xl flex items-center">
+                {score * 10} poin
             </div>
         </div>
     </div>
