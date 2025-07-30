@@ -19,24 +19,25 @@
     let nextQuestionComponent;
     let inputElement;
 
-    let words = ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"];
+    let words = [];
     let shuffledWords = [];
     let wordIndex = 0;
 
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    onMount(() => {
+    onMount(async () => {
+        // Import backend services
+        const { getTypingWords, initializeTypingGame } = await import('../../../backend/read/index.js');
+        
         if (window.Tone) {
             synth = new window.Tone.Synth().toDestination();
         }
-        shuffledWords = shuffle([...words]);
-        nextTypingWord();
+        
+        words = getTypingWords();
+        const gameState = initializeTypingGame(words, totalQuestions);
+        shuffledWords = gameState.shuffledWords;
+        wordIndex = gameState.wordIndex;
+        typingWord = gameState.currentWord;
+        typingScore = gameState.score;
+        
         questionTimer?.startQuestionTimer();
         inputElement?.focus();
 
@@ -73,16 +74,22 @@
         wordIndex++;
     }
 
-    function submitAnswer() {
+    async function submitAnswer() {
         if (!userInput) return;
-        if (userInput.toLowerCase() === typingWord.toLowerCase()) {
-            isTypingCorrect = true;
+        
+        // Import backend service for checking answer
+        const { checkTypingAnswer } = await import('../../../backend/read/index.js');
+        
+        const result = checkTypingAnswer(userInput, typingWord, typingScore);
+        isTypingCorrect = result.isCorrect;
+        typingScore = result.newScore;
+        
+        if (result.isCorrect) {
             playTone('correct');
-            typingScore++;
         } else {
-            isTypingCorrect = false;
             playTone('incorrect');
         }
+        
         nextQuestionComponent?.moveToNextQuestion();
     }
 

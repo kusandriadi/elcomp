@@ -1,41 +1,22 @@
 <script>
     import { onMount, createEventDispatcher } from 'svelte';
+    import { getReadingWords, initializeReadingGame, playSound } from '../../../backend/read/index.js';
+    
     const dispatch = createEventDispatcher();
 
     let readingLevel = 'level1';
-    let readingWords = {
-        level1: ["ba", "bi", "bu", "be", "bo", "ca", "ci", "cu", "ce", "co", "da", "di", "du", "de", "do"],
-        level2: ["baca", "budi", "bola", "dasi", "dadu", "sapi", "kuda", "meja", "roti", "susu"],
-        level3: ["sekolah", "bermain", "belajar", "membaca", "menulis", "berhitung", "selamat pagi", "terima kasih"]
-    };
-
+    let readingWords = {};
     let shuffledWords = {};
     let wordIndices = {};
     let currentWord = '';
 
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
     onMount(() => {
-        for (const level in readingWords) {
-            shuffledWords[level] = shuffle([...readingWords[level]]);
-            wordIndices[level] = 0;
-        }
-        currentWord = shuffledWords[readingLevel][0];
+        readingWords = getReadingWords();
+        const gameState = initializeReadingGame(readingWords, readingLevel);
+        shuffledWords = gameState.shuffledWords;
+        wordIndices = gameState.wordIndices;
+        currentWord = gameState.currentWord;
     });
-
-    function playSound(text) {
-        if (!text) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
-        utterance.lang = 'id-ID';
-        window.speechSynthesis.speak(utterance);
-    }
 
     function nextWord() {
         let currentIndex = wordIndices[readingLevel];
@@ -43,7 +24,13 @@
 
         if (currentIndex >= shuffledWords[readingLevel].length) {
             currentIndex = 0;
-            shuffledWords[readingLevel] = shuffle([...readingWords[readingLevel]]);
+            // Re-shuffle words for current level
+            const words = [...readingWords[readingLevel]];
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            shuffledWords[readingLevel] = words;
         }
 
         wordIndices[readingLevel] = currentIndex;

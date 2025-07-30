@@ -1,43 +1,28 @@
 <script>
     import { onMount, createEventDispatcher } from 'svelte';
+    import { getLettersData, initializeLetterGame, playSound, getNextItem } from '../../../backend/read/index.js';
+    
     const dispatch = createEventDispatcher();
 
-    let letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    let letters = [];
     let shuffledLetters = [];
     let currentIndex = 0;
     let currentLetter = '';
 
-    // Fungsi untuk mengocok array (Fisher-Yates shuffle)
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
     onMount(() => {
-        shuffledLetters = shuffle([...letters]);
-        currentLetter = shuffledLetters[currentIndex];
+        letters = getLettersData();
+        const gameState = initializeLetterGame(letters);
+        shuffledLetters = gameState.shuffledLetters;
+        currentIndex = gameState.currentIndex;
+        currentLetter = gameState.currentLetter;
     });
 
-    function playSound(text) {
-        if (!text) return;
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text.toLowerCase());
-        utterance.lang = 'id-ID';
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // PERUBAHAN: Logika sekarang mengambil huruf dari daftar yang sudah diacak
+    // Get next letter using backend service
     function changeLetter() {
-        currentIndex++;
-        // Jika sudah sampai akhir, kocok lagi dan mulai dari awal
-        if (currentIndex >= shuffledLetters.length) {
-            currentIndex = 0;
-            shuffledLetters = shuffle([...letters]);
-        }
-        currentLetter = shuffledLetters[currentIndex];
+        const nextItem = getNextItem(letters, shuffledLetters, currentIndex);
+        currentLetter = nextItem.item;
+        shuffledLetters = nextItem.newShuffledItems;
+        currentIndex = nextItem.newIndex;
     }
 
     function goBack() {
