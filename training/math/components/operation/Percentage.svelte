@@ -1,5 +1,5 @@
 <script>
-    export let level;
+    export const level = 1; // Default level for external reference
 
     export function generatePercentageQuestion() {
         // Gunakan persentase yang sangat mudah dan bilangan sangat kecil

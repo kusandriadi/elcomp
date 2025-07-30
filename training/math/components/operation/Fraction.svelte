@@ -1,5 +1,5 @@
 <script>
-    export let level;
+    export const level = 1; // Default level for external reference
 
     export function generateFractionQuestion() {
         const scenarios = ['simple_decimal', 'easy_add', 'basic_convert'];

@@ -1,5 +1,5 @@
 <script>
-    export let level;
+    export const level = 1; // Default level for external reference
 
     function generateDecimalQuestion() {
         const scenarios = ['add', 'subtract', 'multiply'];
