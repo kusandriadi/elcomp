@@ -27,13 +27,13 @@
             <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Ayo Belajar Membaca!</h1>
             <p class="text-base text-gray-600 mb-8">Pilih latihan yang kamu suka di bawah ini.</p>
             <div class="space-y-4">
-                <button on:click={() => screen = 'learn-letters'} class="btn-primary w-full text-lg">
+                <button on:click={() => {window.history.pushState({page: 'read-letter'}, '', '/elcomp/read/letter'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-letter'}}));}} class="btn-primary w-full text-lg">
                     📚 Mengenal Huruf
                 </button>
-                <button on:click={() => screen = 'learn-reading'} class="btn-primary w-full text-lg">
+                <button on:click={() => {window.history.pushState({page: 'read-word'}, '', '/elcomp/read/word'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-word'}}));}} class="btn-primary w-full text-lg">
                     📖 Belajar Membaca
                 </button>
-                <button on:click={() => screen = 'typing-game'} class="btn-primary w-full text-lg">
+                <button on:click={() => {window.history.pushState({page: 'read-typing'}, '', '/elcomp/read/typing'); window.dispatchEvent(new PopStateEvent('popstate', {state: {page: 'read-typing'}}));}} class="btn-primary w-full text-lg">
                     ⌨️ Game Mengetik
                 </button>
             </div>

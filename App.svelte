@@ -1,13 +1,63 @@
 <script>
+  import { onMount } from 'svelte';
   import ElRead from './training/read/ElRead.svelte';
   import ElMath from './training/math/ElMath.svelte';
+  import LearnLetters from './training/read/components/LearnLetters.svelte';
+  import LearnReading from './training/read/components/LearnReading.svelte';
+  import TypingGame from './training/read/components/TypingGame.svelte';
+  import HomeButton from './components/HomeButton.svelte';
 
   let currentPage = 'home';
-  // 'home', 'reading', 'math', 'logic'
+  
+  // Route configuration
+  const routes = {
+    'home': '/elcomp',
+    'math': '/elcomp/math',
+    'reading': '/elcomp/read',
+    'read-letter': '/elcomp/read/letter',
+    'read-word': '/elcomp/read/word',
+    'read-typing': '/elcomp/read/typing',
+    'logic': '/elcomp/logic'
+  };
 
+  // Function to get current page from URL
+  function getPageFromURL() {
+    const path = window.location.pathname;
+    return Object.keys(routes).find(page => routes[page] === path) || 'home';
+  }
+
+  // Function to update URL and page
   function navigateTo(page) {
     currentPage = page;
+    const path = routes[page] || routes.home;
+    window.history.pushState({ page }, '', path);
   }
+
+  // Function to handle browser back/forward buttons
+  function handlePopState(event) {
+    if (event.state && event.state.page) {
+      currentPage = event.state.page;
+    } else {
+      currentPage = getPageFromURL();
+    }
+  }
+
+  // Initialize routing on component mount
+  onMount(() => {
+    // Set initial page based on current URL
+    currentPage = getPageFromURL();
+    
+    // Listen for browser back/forward button clicks
+    window.addEventListener('popstate', handlePopState);
+    
+    // Set initial state
+    window.history.replaceState({ page: currentPage }, '', window.location.pathname);
+    
+    // Cleanup listener on component destroy
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  });
 
   // Fungsi untuk memulai audio konteks dan navigasi
   async function startAndNavigate(page) {
@@ -19,7 +69,21 @@
 </script>
 
 <svelte:head>
-  <title>🎮 ElCompia - Elementary Computational Thinking Platform</title>
+  {#if currentPage === 'math'}
+    <title>🔢 Matematika - ElCompia</title>
+  {:else if currentPage === 'reading'}
+    <title>📚 Membaca & Menulis - ElCompia</title>
+  {:else if currentPage === 'read-letter'}
+    <title>📚 Mengenal Huruf - ElCompia</title>
+  {:else if currentPage === 'read-word'}
+    <title>📖 Belajar Membaca - ElCompia</title>
+  {:else if currentPage === 'read-typing'}
+    <title>⌨️ Game Mengetik - ElCompia</title>
+  {:else if currentPage === 'logic'}
+    <title>🧩 Logika - ElCompia</title>
+  {:else}
+    <title>🎮 ElCompia - Elementary Computational Thinking Platform</title>
+  {/if}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -81,49 +145,19 @@
 
 {:else if currentPage === 'reading'}
   <div class="min-h-screen bg-pattern" style="background: var(--reading-bg);">
-    <!-- Home Button - Mobile Optimized -->
-    <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-      <button
-              on:click={() => navigateTo('home')}
-              class="text-white font-bold p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:shadow-2xl flex items-center justify-center"
-              style="background: var(--primary-gradient); border: 2px solid rgba(255, 255, 255, 0.3); min-width: 3rem; min-height: 3rem;"
-              title="🏠 Kembali ke Menu Utama"
-      >
-        <div class="text-xl sm:text-2xl">🏠</div>
-      </button>
-    </div>
+    <HomeButton onClick={() => navigateTo('home')} />
     <ElRead />
   </div>
 
 {:else if currentPage === 'math'}
   <div class="min-h-screen bg-pattern" style="background: var(--math-bg);">
-    <!-- Home Button - Mobile Optimized -->
-    <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-      <button
-              on:click={() => navigateTo('home')}
-              class="text-white font-bold p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:shadow-2xl flex items-center justify-center"
-              style="background: var(--success-gradient); border: 2px solid rgba(255, 255, 255, 0.3); min-width: 3rem; min-height: 3rem;"
-              title="🏠 Kembali ke Menu Utama"
-      >
-        <div class="text-xl sm:text-2xl">🏠</div>
-      </button>
-    </div>
+    <HomeButton gradient="var(--success-gradient)" onClick={() => navigateTo('home')} />
     <ElMath />
   </div>
 
 {:else if currentPage === 'logic'}
   <div class="flex items-center justify-center min-h-screen bg-pattern p-3 sm:p-4" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);">
-    <!-- Home Button - Mobile Optimized -->
-    <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
-      <button
-              on:click={() => navigateTo('home')}
-              class="text-white font-bold p-3 sm:p-4 rounded-full shadow-xl transition-all duration-300 hover:shadow-2xl flex items-center justify-center"
-              style="background: var(--purple-gradient); border: 2px solid rgba(255, 255, 255, 0.3); min-width: 3rem; min-height: 3rem;"
-              title="🏠 Kembali ke Menu Utama"
-      >
-        <div class="text-xl sm:text-2xl">🏠</div>
-      </button>
-    </div>
+    <HomeButton gradient="var(--purple-gradient)" onClick={() => navigateTo('home')} />
     
     <div class="card text-center animate-fade-in">
       <div class="text-4xl sm:text-5xl md:text-6xl mb-4 sm:mb-6">🧩</div>
@@ -134,6 +168,30 @@
         Fitur seru ini sedang dikembangkan... 🚧✨
       </p>
       <div class="text-2xl sm:text-3xl md:text-4xl animate-gentle-pulse">🔜</div>
+    </div>
+  </div>
+
+{:else if currentPage === 'read-letter'}
+  <div class="min-h-screen bg-pattern" style="background: var(--reading-bg);">
+    <HomeButton onClick={() => navigateTo('home')} />
+    <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
+      <LearnLetters on:switch={(e) => { if (e.detail.screen === 'setup') navigateTo('reading'); }} />
+    </div>
+  </div>
+
+{:else if currentPage === 'read-word'}
+  <div class="min-h-screen bg-pattern" style="background: var(--reading-bg);">
+    <HomeButton onClick={() => navigateTo('home')} />
+    <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
+      <LearnReading on:switch={(e) => { if (e.detail.screen === 'setup') navigateTo('reading'); }} />
+    </div>
+  </div>
+
+{:else if currentPage === 'read-typing'}
+  <div class="min-h-screen bg-pattern" style="background: var(--reading-bg);">
+    <HomeButton onClick={() => navigateTo('home')} />
+    <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
+      <TypingGame on:switch={(e) => { if (e.detail.screen === 'setup') navigateTo('reading'); }} />
     </div>
   </div>
 {/if}
